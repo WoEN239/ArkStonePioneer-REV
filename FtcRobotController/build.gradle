@@ -21,7 +21,7 @@ android {
         }
     }
 
-    ndkVersion '21.3.6528147'
+    ndkVersion '23.0.7599858'
 }
 
 apply from: '../moduleFlavors.gradle'
