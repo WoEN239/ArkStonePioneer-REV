@@ -5,6 +5,7 @@ import android.content.Context;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.hoho.android.usbserial.driver.CdcAcmSerialDriver;
 import com.hoho.android.usbserial.driver.ProbeTable;
@@ -16,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,11 +53,15 @@ public class Test extends LinearOpMode {
     private static final int USB_PID = 0x6001;
     private static final boolean FILTER_ID = false;
     private static final int TIMEOUT_MILLIS = 1000;
+    private static final int RECEIVE_MESSAGE_LENGTH = 4;
+    private static final int BUFFER_SIZE = 128;
 
     public static CommandType commandType = CommandType.CMD_RESET;
     public static int controllerNumber = 0;
     public static int hiByte = 0;
     public static int loByte = 0;
+
+    public static int motorNumber = 1;
 
     static byte[] concatArray(byte[] array1, byte[] array2) {
         byte[] result = Arrays.copyOf(array1, array1.length + array2.length);
@@ -98,6 +104,36 @@ public class Test extends LinearOpMode {
         return port;
     }
 
+    public byte[] writeBytesAndGetResponse(UsbSerialPort serialPort, byte[] bytesToWrite) throws IOException {
+        try {
+            serialPort.write(bytesToWrite, TIMEOUT_MILLIS);
+            try {
+                byte[] receivedMessage = new byte[0];
+                ElapsedTime receiveTimer = new ElapsedTime();
+                receiveTimer.reset();
+                while (opModeIsActive() && receiveTimer.milliseconds() < TIMEOUT_MILLIS) {
+                    byte[] buffer = new byte[BUFFER_SIZE];
+                    int read = serialPort.read(buffer, TIMEOUT_MILLIS);
+                    if (read > 0) {
+                        receivedMessage = concatArray(receivedMessage, truncateArray(buffer, read));
+                    }
+                    if (receivedMessage.length >= RECEIVE_MESSAGE_LENGTH) {
+                        return truncateArray(receivedMessage, RECEIVE_MESSAGE_LENGTH);
+                    }
+                }
+                throw new IOException("Timeout exceeded");
+            } catch (IOException exception) {
+                throw new IOException("Read failed (" + exception.getMessage() + ")");
+            }
+        } catch (IOException exception) {
+            throw new IOException("Write failed (" + exception.getMessage() + ")");
+        }
+    }
+
+    public byte[] writeCommand(UsbSerialPort serialPort, CommandType commandType, int controllerNumber, int hiByte, int loByte) throws IOException {
+        return writeBytesAndGetResponse(serialPort, new byte[]{(byte) commandType.ordinal(), (byte) controllerNumber, (byte) hiByte, (byte) loByte});
+    }
+
     @Override
     public void runOpMode() {
 
@@ -106,19 +142,21 @@ public class Test extends LinearOpMode {
 
 
         //  telemetry = FtcDashboard.getInstance().getTelemetry();
+        telemetry.setMsTransmissionInterval(1000 / 50);
 
         UsbSerialPort serialPort = null;
 
         try {
             serialPort = establishConnection();
         } catch (IOException exception) {
-            telemetry.addData("Failed to connect: IOException", exception.getMessage());
+            telemetry.addData("Failed to connect (", exception.getMessage() + ")");
         }
         if (serialPort != null) {
             telemetry.addLine("Connected");
         }
 
         telemetry.update();
+        ElapsedTime elapsedTime = new ElapsedTime();
         waitForStart();
 
         while (opModeIsActive() && serialPort == null) {
@@ -133,38 +171,31 @@ public class Test extends LinearOpMode {
         if (serialPort != null) {
             while (opModeIsActive()) {
                 try {
-                    byte[] writeBytes = new byte[]{(byte) commandType.ordinal(), (byte) controllerNumber, (byte) hiByte, (byte) loByte};
-                    serialPort.write(writeBytes, TIMEOUT_MILLIS);
-                    telemetry.addData("Wrote", Arrays.toString(writeBytes));
-                    try {
-                        byte[] receivedMessage = new byte[0];
-                        boolean didReceiveMessage = false;
-                        ElapsedTime receiveTimer = new ElapsedTime();
-                        receiveTimer.reset();
-                        while (!didReceiveMessage && opModeIsActive()) {
-                            byte[] buffer = new byte[128];
-                            int read = serialPort.read(buffer, TIMEOUT_MILLIS);
-                            if (read > 0) {
-                                receivedMessage = concatArray(receivedMessage, truncateArray(buffer, read));
-                            }
-                            if (receivedMessage.length >= 4) {
-                                //if (receivedMessage[receivedMessage.length - 1] == (byte) '\n' && receivedMessage[receivedMessage.length - 2] == (byte) '\r') {
-                                telemetry.addData("Read", Arrays.toString(receivedMessage));
-                                didReceiveMessage = true;
-                                //message = new byte[0];
-                            }
-                            if (receiveTimer.milliseconds() > TIMEOUT_MILLIS) {
-                                throw new IOException("Timeout exceeded");
-                            }
-                        }
-                    } catch (IOException exception) {
-                        telemetry.addData("Read IOException", exception.getMessage());
+                    writeCommand(serialPort, CommandType.CMD_SETMOTORPOWER, 0, motorNumber, (int) (100.0 * gamepad1.left_stick_y));
+                    byte[] response = writeCommand(serialPort, commandType, 0, motorNumber, 0);
+                    switch (commandType) {
+                        case CMD_READENCODER:
+                            FtcDashboard.getInstance().getTelemetry().addData("ticks", new BigInteger(response).intValue());
+                            FtcDashboard.getInstance().getTelemetry().update();
+                        case CMD_READMOTORCURRENT:
+                            FtcDashboard.getInstance().getTelemetry().addData("current", new BigInteger(response).intValue());
+                            FtcDashboard.getInstance().getTelemetry().update();
+                            //break;
+                        default:
+                            telemetry.addData("Received", Arrays.toString(response));
+                            break;
                     }
                 } catch (IOException exception) {
-                    telemetry.addData("Write IOException", exception.getMessage());
+                    telemetry.addData("IOException", exception.getMessage());
+                    try {
+                        serialPort = establishConnection();
+                    } catch (IOException fatalException) {
+                        telemetry.addData("Failed to reconnect", fatalException.getMessage());
+                    }
                 }
 
-                sleep(100);
+
+                sleep(1000 / 50);
 
                 telemetry.update();
             }
