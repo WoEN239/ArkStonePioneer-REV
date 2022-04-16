@@ -1,53 +1,25 @@
 package org.firstinspires.ftc.teamcode.usbserial;
 
 
-import android.content.Context;
-import android.hardware.usb.UsbDeviceConnection;
-import android.hardware.usb.UsbManager;
+import static java.lang.Math.sin;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.hoho.android.usbserial.driver.CdcAcmSerialDriver;
-import com.hoho.android.usbserial.driver.ProbeTable;
-import com.hoho.android.usbserial.driver.UsbSerialDriver;
-import com.hoho.android.usbserial.driver.UsbSerialPort;
-import com.hoho.android.usbserial.driver.UsbSerialProber;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.List;
 
 @TeleOp
 @Config
 public class Test extends LinearOpMode {
 
     /*
-    public static List<byte[]> tokens(byte[] array, byte[] delimiter) {
-        List<byte[]> byteArrays = new LinkedList<>();
-        if (delimiter.length == 0) {
-            return byteArrays;
-        }
-        int begin = 0;
-
-        outer:
-        for (int i = 0; i < array.length - delimiter.length + 1; i++) {
-            for (int j = 0; j < delimiter.length; j++) {
-                if (array[i + j] != delimiter[j]) {
-                    continue outer;
-                }
-            }
-            byteArrays.add(Arrays.copyOfRange(array, begin, i));
-            begin = i + delimiter.length;
-        }
-        byteArrays.add(Arrays.copyOfRange(array, begin, array.length));
-        return byteArrays;
-    }
-     */
-
     private static final int BAUD_RATE = 115200;
     private static final int USB_VID = 0x0403;
     private static final int USB_PID = 0x6001;
@@ -56,28 +28,12 @@ public class Test extends LinearOpMode {
     private static final int RECEIVE_MESSAGE_LENGTH = 4;
     private static final int BUFFER_SIZE = 128;
 
-    public static CommandType commandType = CommandType.CMD_RESET;
+    public static SerialCommand.CommandType commandType = SerialCommand.CommandType.CMD_HEARTBEAT;
     public static int controllerNumber = 0;
     public static int hiByte = 0;
     public static int loByte = 0;
 
     public static int motorNumber = 1;
-
-    static byte[] concatArray(byte[] array1, byte[] array2) {
-        byte[] result = Arrays.copyOf(array1, array1.length + array2.length);
-        System.arraycopy(array2, 0, result, array1.length, array2.length);
-        return result;
-    }
-
-    static byte[] truncateArray(byte[] array, int newLength) {
-        if (array.length < newLength) {
-            return array;
-        } else {
-            byte[] truncated = new byte[newLength];
-            System.arraycopy(array, 0, truncated, 0, newLength);
-            return truncated;
-        }
-    }
 
     public UsbSerialPort establishConnection() throws IOException {
         UsbManager manager = (UsbManager) hardwareMap.appContext.getSystemService(Context.USB_SERVICE);
@@ -98,7 +54,6 @@ public class Test extends LinearOpMode {
         }
 
         UsbSerialPort port = driver.getPorts().get(0); // Most devices have just one port (port 0)
-
         port.open(connection);
         port.setParameters(BAUD_RATE, UsbSerialPort.DATABITS_8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
         return port;
@@ -110,7 +65,7 @@ public class Test extends LinearOpMode {
             try {
                 byte[] receivedMessage = new byte[0];
                 ElapsedTime receiveTimer = new ElapsedTime();
-                receiveTimer.reset();
+
                 while (opModeIsActive() && receiveTimer.milliseconds() < TIMEOUT_MILLIS) {
                     byte[] buffer = new byte[BUFFER_SIZE];
                     int read = serialPort.read(buffer, TIMEOUT_MILLIS);
@@ -130,79 +85,66 @@ public class Test extends LinearOpMode {
         }
     }
 
-    public byte[] writeCommand(UsbSerialPort serialPort, CommandType commandType, int controllerNumber, int hiByte, int loByte) throws IOException {
+    public byte[] writeCommand(UsbSerialPort serialPort, SerialCommand.CommandType commandType, int controllerNumber, int hiByte, int loByte) throws IOException {
         return writeBytesAndGetResponse(serialPort, new byte[]{(byte) commandType.ordinal(), (byte) controllerNumber, (byte) hiByte, (byte) loByte});
     }
+
+
+     */
+
 
     @Override
     public void runOpMode() {
 
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
 
-        final int WRITE_WAIT_MILLIS = 1000;
+        DcMotor dcMotor = hardwareMap.dcMotor.get("motor1");
 
+        dcMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        dcMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        dcMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        //  telemetry = FtcDashboard.getInstance().getTelemetry();
         telemetry.setMsTransmissionInterval(1000 / 50);
 
-        UsbSerialPort serialPort = null;
+        sleep(1000 / 50);
+
+        SerialConnection serialConnection = new SerialConnection();
 
         try {
-            serialPort = establishConnection();
+            serialConnection.open();
         } catch (IOException exception) {
-            telemetry.addData("Failed to connect (", exception.getMessage() + ")");
+            telemetry.addData("Failed to connect", exception.getMessage());
         }
-        if (serialPort != null) {
-            telemetry.addLine("Connected");
-        }
+
+        telemetry.addData("Connected", serialConnection.isConnectionActive());
 
         telemetry.update();
         ElapsedTime elapsedTime = new ElapsedTime();
         waitForStart();
 
-        while (opModeIsActive() && serialPort == null) {
+        while (opModeIsActive() && !serialConnection.isConnectionActive()) {
             telemetry.addLine("Trying to re-establish connection");
             try {
-                serialPort = establishConnection();
+                serialConnection.open();
             } catch (IOException exception) {
                 telemetry.addData("Connection IOException", exception.getMessage());
             }
             telemetry.update();
         }
-        if (serialPort != null) {
-            while (opModeIsActive()) {
-                try {
-                    writeCommand(serialPort, CommandType.CMD_SETMOTORPOWER, 0, motorNumber, (int) (100.0 * gamepad1.left_stick_y));
-                    byte[] response = writeCommand(serialPort, commandType, 0, motorNumber, 0);
-                    switch (commandType) {
-                        case CMD_READENCODER:
-                            FtcDashboard.getInstance().getTelemetry().addData("ticks", new BigInteger(response).intValue());
-                            FtcDashboard.getInstance().getTelemetry().update();
-                        case CMD_READMOTORCURRENT:
-                            FtcDashboard.getInstance().getTelemetry().addData("current", new BigInteger(response).intValue());
-                            FtcDashboard.getInstance().getTelemetry().update();
-                            //break;
-                        default:
-                            telemetry.addData("Received", Arrays.toString(response));
-                            break;
-                    }
-                } catch (IOException exception) {
-                    telemetry.addData("IOException", exception.getMessage());
-                    try {
-                        serialPort = establishConnection();
-                    } catch (IOException fatalException) {
-                        telemetry.addData("Failed to reconnect", fatalException.getMessage());
-                    }
-                }
-
-
-                sleep(1000 / 50);
-
-                telemetry.update();
-            }
-            try {
-                serialPort.close();
-            } catch (IOException ignored) {
-            }
+        elapsedTime.reset();
+        while (opModeIsActive()) {
+            //if (serialConnection.isConnectionActive()) {
+            double power = .15 * sin(elapsedTime.seconds() * 0.314) * sin(elapsedTime.seconds() * 3.14);
+            serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 1, (int) (100.0 * gamepad1.left_stick_y)));
+            serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 2, (int) (power * 100.0)));
+            dcMotor.setPower(power);
+            byte[] response = serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_READENCODER, 0, 1));
+            if (response != null) {
+                telemetry.addData("Received", Arrays.toString(response));
+                telemetry.addData("Value", ArrayUtils.getIntFromBytes(response));
+            } else
+                telemetry.addLine("Received null");
+            telemetry.update();
         }
     }
 }
