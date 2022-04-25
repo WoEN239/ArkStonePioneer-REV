@@ -16,12 +16,14 @@ public class ColorReference {
 
     private final EnumMap<FieldColor, Integer> colorReferenceMap;
 
-    static final ColorReference defaultColorReference = new ColorReference(
-            new EnumMap<FieldColor, Integer>(FieldColor.class) {{
-                put(FieldColor.RED, Color.RED);
-                put(FieldColor.BLUE, Color.BLUE);
-                put(FieldColor.WHITE, Color.WHITE);
-            }});
+    public static ColorReference defaultColorReference() {
+        return new ColorReference(
+                new EnumMap<FieldColor, Integer>(FieldColor.class) {{
+                    put(FieldColor.RED, Color.RED);
+                    put(FieldColor.BLUE, Color.BLUE);
+                    put(FieldColor.WHITE, Color.WHITE);
+                }});
+    }
 
     public ColorReference(EnumMap<FieldColor, Integer> colorReferenceMap) {
         this.colorReferenceMap = colorReferenceMap;
@@ -40,5 +42,9 @@ public class ColorReference {
                     return sqrt(sqr(colorRefernceR - matchColorR) + sqr(colorRefernceG - matchColorG) + sqr(colorRefernceB - matchColorB));
                 })));
         return Collections.min(radiusMap.entrySet(), Map.Entry.comparingByValue()).getKey();
+    }
+
+    public void put(FieldColor fieldColor, @ColorInt int adjustedColor){
+        colorReferenceMap.put(fieldColor, adjustedColor);
     }
 }

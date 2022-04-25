@@ -11,6 +11,8 @@ public class WoENRobot {
     public final LedStrip ledStrip = new LedStrip(this);
     public final Odometry odometry = new Odometry(this);
     public final Barrier barrier = new Barrier(this);
+    public final FieldSensor fieldSensor = new FieldSensor(this);
+    public final OrientationSensor orientationSensor = new OrientationSensor(this);
     protected final Hardware hardware;
     protected final LinearOpMode opMode;
     private final Stream<LoopedSubsystem> allModules = Stream.of(
