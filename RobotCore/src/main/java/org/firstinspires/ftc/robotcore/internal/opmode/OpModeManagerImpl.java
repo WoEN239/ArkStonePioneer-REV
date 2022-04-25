@@ -60,6 +60,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
 import com.qualcomm.robotcore.util.WeakReferenceSet;
 
+import org.firstinspires.ftc.robotcore.internal.hardware.android.Rev3328;
 import org.firstinspires.ftc.robotcore.internal.network.NetworkConnectionHandler;
 import org.firstinspires.ftc.robotcore.internal.network.RobotCoreCommandList;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -875,6 +876,7 @@ public class OpModeManagerImpl implements OpModeServices, OpModeManagerNotifier 
      *  Maintain a safe robot by periodically setting all output devices to safe state
      */
     private void staySafe() {
+
       // periodically set:
       //  DcMotor run mode to something reasonable
       //  Servos to disabled
@@ -919,6 +921,9 @@ public class OpModeManagerImpl implements OpModeServices, OpModeManagerNotifier 
           blinkerTimer.reset();
         }*/
       }
+
+      //if (Rev3328.getInstance().getUserButtonPin().getState()) new ButtonOpModeStarter("OpModeTest", OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().getActivity()));
+
     }
   }
 }
