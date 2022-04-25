@@ -20,7 +20,9 @@ public class WoENRobot {
             drivetrain,
             ledStrip,
             odometry,
-            barrier
+            barrier,
+            fieldSensor,
+            orientationSensor
     );
 
     public WoENRobot(LinearOpMode opMode) {
