@@ -15,9 +15,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.io.IOException;
 import java.util.Arrays;
 
-@TeleOp
-@Config
-public class Test extends LinearOpMode {
+//@TeleOp
+//@Config
+public class SerialTest extends LinearOpMode {
 
     /*
     private static final int BAUD_RATE = 115200;
@@ -134,16 +134,17 @@ public class Test extends LinearOpMode {
         elapsedTime.reset();
         while (opModeIsActive()) {
             //if (serialConnection.isConnectionActive()) {
-            double power = .15 * sin(elapsedTime.seconds() * 0.314) * sin(elapsedTime.seconds() * 3.14);
-            serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 1, (int) (100.0 * gamepad1.left_stick_y)));
-            serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 2, (int) (power * 100.0)));
+            double power = .25 * sin(elapsedTime.seconds() * 5); //* sin(elapsedTime.seconds() * 3.14);
+           serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 1, (int) (100.0 * power)));
+           serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 2, (int) ((gamepad1.left_trigger - gamepad1.right_trigger)* 100.0)));
             dcMotor.setPower(power);
             byte[] response = serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_READENCODER, 0, 1));
             if (response != null) {
-                telemetry.addData("Received", Arrays.toString(response));
+                //telemetry.addData("Received", Arrays.toString(response));
                 telemetry.addData("Value", ArrayUtils.getIntFromBytes(response));
-            } else
-                telemetry.addLine("Received null");
+            } else {
+                //telemetry.addLine("Received null");
+            }
             telemetry.update();
         }
     }
