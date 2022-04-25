@@ -9,11 +9,13 @@ import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.internal.hardware.android.Rev3328;
 import org.firstinspires.ftc.teamcode.util.ServoEx;
 
 public class Hardware {
@@ -49,7 +51,9 @@ public class Hardware {
     protected final Blinker controlHubLED;
     protected final Blinker expansionHubLED;
 
-    protected VoltageSensor batteryVoltageSensor = null;
+    protected final VoltageSensor batteryVoltageSensor;
+
+    protected final DigitalChannel controlHubButton;
 
     public Hardware(HardwareMap hardwareMap) {
         leftBrushMotor = hardwareMap.get(DcMotorEx.class, "leftBrushMotor");
@@ -85,5 +89,7 @@ public class Hardware {
 
         controlHubLED = hardwareMap.get(Blinker.class, "Control Hub");
         expansionHubLED = hardwareMap.get(Blinker.class, "Expansion Hub 1");
+
+        controlHubButton = Rev3328.getInstance().getUserButtonPin();
     }
 }
