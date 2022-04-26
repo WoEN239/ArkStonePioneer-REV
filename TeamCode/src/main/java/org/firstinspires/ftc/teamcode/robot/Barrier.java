@@ -4,6 +4,7 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ServoEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 public class Barrier extends RobotModule {
@@ -17,6 +18,8 @@ public class Barrier extends RobotModule {
 
     public static float minAngle = (float) toRadians(-15f);
     public static float maxAngle = (float) toRadians(105f);
+
+    private final ElapsedTime timeSinceLastBarrierOpenning = new ElapsedTime();
 
     public Barrier(WoENRobot robot) {
         super(robot);
@@ -33,5 +36,11 @@ public class Barrier extends RobotModule {
         boolean open = robot.fieldSensor.isOnTeamSquare() && (!USE_ANGLE ||
                 (minAngle < robot.orientationSensor.getOrientation() && robot.orientationSensor.getOrientation() < maxAngle));
         barrierServo.setPosition(open ? BARRIER_OPEN : BARRIER_CLOSE);
+        if (open)
+            timeSinceLastBarrierOpenning.reset();
+    }
+
+    public double getSecondsSinceLastBarrierOpenning() {
+        return timeSinceLastBarrierOpenning.seconds();
     }
 }

@@ -44,6 +44,9 @@ public class Separator extends RobotModule {
 
     private FieldColor lastReadColor = FieldColor.WHITE;
 
+    private FieldColor lastCollectedPuckColor = FieldColor.WHITE;
+    private final ElapsedTime timeSinceLastPuckCollection = new ElapsedTime();
+
     private ColorReference puckColorSensorReference = new ColorReference(
             new EnumMap<FieldColor, Integer>(FieldColor.class) {{
                 put(FieldColor.RED, Color.RED);
@@ -74,9 +77,13 @@ public class Separator extends RobotModule {
             if (lastReadColor == teamColor) {
                 setSeparatorMotorTarget(separatorMotorTarget + SEPARATOR_MOTOR_ROTATION_ENCODER_TICKS);
                 teamPucksCollected++;
+                lastCollectedPuckColor = lastReadColor;
+                timeSinceLastPuckCollection.reset();
             } else if (lastReadColor == teamColor.opposite()) {
                 setSeparatorMotorTarget(separatorMotorTarget - SEPARATOR_MOTOR_ROTATION_ENCODER_TICKS);
                 opponentPucksCollected++;
+                lastCollectedPuckColor = lastReadColor;
+                timeSinceLastPuckCollection.reset();
             }
         }
         if (separatorMotorStallDetectionTimer.seconds() > SEPARATOR_MOTOR_STALL_DETECTION_S) {
@@ -119,6 +126,10 @@ public class Separator extends RobotModule {
 
     public int getOpponentPucksCollected() {
         return opponentPucksCollected;
+    }
+
+    public double getSecondsSinceLastPuckCollection() {
+        return timeSinceLastPuckCollection.seconds();
     }
 
 }
