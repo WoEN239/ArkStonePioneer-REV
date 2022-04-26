@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.hitechnic.HiTechnicNxtColorSensor;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.lynx.LynxVoltageSensor;
-import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -32,7 +30,7 @@ public class Hardware {
     protected final DcMotorEx odometer2;
 
     protected final DcMotorEx separatorMotor;
-    protected final ColorSensor separatorColorSensor;
+    protected final ColorSensor puckColorSensor;
 
     protected final ServoEx barrierServo;
     protected final ColorSensor fieldColorSensor;
@@ -63,7 +61,7 @@ public class Hardware {
         rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "rightDistanceSensor");
 
         separatorMotor = hardwareMap.get(DcMotorEx.class, "separatorMotor");
-        separatorColorSensor = new HiTechnicNxtColorSensor(hardwareMap.get(I2cDeviceSynch.class, "separatorColorSensor"));
+        puckColorSensor = new HiTechnicNxtColorSensor(hardwareMap.get(I2cDeviceSynch.class, "puckColorSensor"));
         //separatorColorSensor = hardwareMap.get(ColorSensor.class, "separatorColorSensor");
 
         barrierServo = hardwareMap.get(ServoEx.class, "barrierServo");
