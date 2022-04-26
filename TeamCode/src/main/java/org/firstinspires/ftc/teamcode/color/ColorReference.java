@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.color;
 
-import static org.firstinspires.ftc.teamcode.util.MathUtils.sqr;
-import static java.lang.Math.sqrt;
+import static android.graphics.Color.blue;
+import static android.graphics.Color.green;
+import static android.graphics.Color.red;
+import static org.firstinspires.ftc.teamcode.color.ColorUtils.rgbDistance;
 
 import android.graphics.Color;
 
@@ -16,6 +18,10 @@ public class ColorReference {
 
     private final EnumMap<FieldColor, Integer> colorReferenceMap;
 
+    public ColorReference(EnumMap<FieldColor, Integer> colorReferenceMap) {
+        this.colorReferenceMap = colorReferenceMap;
+    }
+
     public static ColorReference defaultColorReference() {
         return new ColorReference(
                 new EnumMap<FieldColor, Integer>(FieldColor.class) {{
@@ -25,26 +31,19 @@ public class ColorReference {
                 }});
     }
 
-    public ColorReference(EnumMap<FieldColor, Integer> colorReferenceMap) {
-        this.colorReferenceMap = colorReferenceMap;
-    }
-
     public FieldColor matchClosestColor(@ColorInt int matchColor) {
-        int matchColorR = Color.red(matchColor);
-        int matchColorG = Color.green(matchColor);
-        int matchColorB = Color.blue(matchColor);
+        int matchColorR = red(matchColor);
+        int matchColorG = green(matchColor);
+        int matchColorB = blue(matchColor);
         EnumMap<FieldColor, Double> radiusMap = new EnumMap(colorReferenceMap.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, colorReferenceEnry -> {
-                    @ColorInt int colorReference = colorReferenceEnry.getValue();
-                    @ColorInt int colorRefernceR = Color.red(colorReference);
-                    @ColorInt int colorRefernceG = Color.green(colorReference);
-                    @ColorInt int colorRefernceB = Color.blue(colorReference);
-                    return sqrt(sqr(colorRefernceR - matchColorR) + sqr(colorRefernceG - matchColorG) + sqr(colorRefernceB - matchColorB));
+                .collect(Collectors.toMap(Map.Entry::getKey, colorReferenceEntry -> {
+                    @ColorInt int colorReference = colorReferenceEntry.getValue();
+                    return rgbDistance(red(colorReference), matchColorR, green(colorReference), matchColorG, blue(colorReference), matchColorB);
                 })));
         return Collections.min(radiusMap.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
-    public void put(FieldColor fieldColor, @ColorInt int adjustedColor){
+    public void put(FieldColor fieldColor, @ColorInt int adjustedColor) {
         colorReferenceMap.put(fieldColor, adjustedColor);
     }
 }
