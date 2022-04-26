@@ -6,6 +6,7 @@ import androidx.annotation.ColorInt;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +20,7 @@ import java.util.EnumMap;
 public class Separator extends RobotModule {
 
     public static DcMotorSimple.Direction SEPARATOR_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+    public static DcMotor.ZeroPowerBehavior SEPARATOR_MOTOR_ZEROPOWERBEHAVIOR = DcMotor.ZeroPowerBehavior.BRAKE;
     public static double SEPARATOR_MOTOR_ROTATION_ENCODER_TICKS = 120 * 2; // Surprisingly LEGO motors have 720 CPR encoders
     public static double SEPARATOR_MOTOR_STALL_DETECTION_S = 0.25;
     @ColorInt
@@ -65,6 +67,7 @@ public class Separator extends RobotModule {
 
         separatorMotor = robot.hardware.separatorMotor;
         separatorMotor.setDirection(SEPARATOR_MOTOR_DIRECTION);
+        separatorMotor.setZeroPowerBehavior(SEPARATOR_MOTOR_ZEROPOWERBEHAVIOR);
         //separatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
@@ -118,6 +121,10 @@ public class Separator extends RobotModule {
 
     public FieldColor getLastReadColor() {
         return lastReadColor;
+    }
+
+    public FieldColor getLastCollectedPuckColor() {
+        return lastCollectedPuckColor;
     }
 
     public int getTeamPucksCollected() {

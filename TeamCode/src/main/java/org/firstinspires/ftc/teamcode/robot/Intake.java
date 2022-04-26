@@ -33,7 +33,10 @@ public class Intake extends RobotModule {
         rightBrushMotor = robot.hardware.rightBrushMotor;
 
         leftBrushMotor.setDirection(LEFT_MOTOR_DIRECTION);
-        leftBrushMotor.setDirection(RIGHT_MOTOR_DIRECTION);
+        rightBrushMotor.setDirection(RIGHT_MOTOR_DIRECTION);
+
+        leftBrushMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightBrushMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         leftBrushMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBrushMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
