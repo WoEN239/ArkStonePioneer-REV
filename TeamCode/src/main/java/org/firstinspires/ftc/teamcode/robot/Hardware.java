@@ -11,10 +11,14 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
+import com.qualcomm.robotcore.hardware.ServoEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.hardware.android.Rev3328;
-import org.firstinspires.ftc.teamcode.util.ServoEx;
+import org.firstinspires.ftc.teamcode.util.FakeDcMotorEx;
+
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Hardware {
 
@@ -45,6 +49,8 @@ public class Hardware {
 
     protected final LynxModule controlHub;
     protected final LynxModule expansionHub;
+
+    protected final Supplier<Stream<LynxModule>> allHubs;
 
     protected final Blinker controlHubLED;
     protected final Blinker expansionHubLED;
@@ -81,12 +87,17 @@ public class Hardware {
         ledStrip = hardwareMap.get(DcMotorSimple.class, "ledStrip");
 
         controlHub = hardwareMap.get(LynxModule.class, "Control Hub");
-        expansionHub = hardwareMap.get(LynxModule.class, "Expansion Hub 1");
+        expansionHub = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
+
+        allHubs = () -> Stream.of(
+                controlHub,
+                expansionHub
+        );
 
         batteryVoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
         controlHubLED = hardwareMap.get(Blinker.class, "Control Hub");
-        expansionHubLED = hardwareMap.get(Blinker.class, "Expansion Hub 1");
+        expansionHubLED = hardwareMap.get(Blinker.class, "Expansion Hub 2");
 
         controlHubButton = Rev3328.getInstance().getUserButtonPin();
     }
