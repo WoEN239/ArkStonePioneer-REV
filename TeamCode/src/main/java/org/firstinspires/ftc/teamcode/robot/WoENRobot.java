@@ -13,7 +13,7 @@ public class WoENRobot {
     public final Separator separator = new Separator(this);
     public final Intake intake = new Intake(this);
     public final Drivetrain drivetrain = new Drivetrain(this);
-    public final LedStrip ledStrip = new LedStrip(this);
+    public final LEDController LEDController = new LEDController(this);
     public final Odometry odometry = new Odometry(this);
     public final Barrier barrier = new Barrier(this);
     public final FieldSensor fieldSensor = new FieldSensor(this);
@@ -25,7 +25,7 @@ public class WoENRobot {
             separator,
             drivetrain,
             intake,
-            ledStrip,
+            LEDController,
             odometry,
             barrier,
             fieldSensor,
