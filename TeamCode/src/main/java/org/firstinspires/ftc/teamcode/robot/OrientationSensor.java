@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2;
 
 import org.firstinspires.ftc.teamcode.util.TimedSensorQuery;
 
+@Config
 public class OrientationSensor extends RobotModule {
 
     public OrientationSensor(WoENRobot robot) {
@@ -14,8 +16,10 @@ public class OrientationSensor extends RobotModule {
 
     private BNO055IMU gyro;
 
+    public static double REFRESH_RATE_HZ = 100;
+
     private final TimedSensorQuery<Float> timedGyroQuery = new TimedSensorQuery<>(() -> gyro
-            .getAngularOrientation().firstAngle, 100);
+            .getAngularOrientation().firstAngle, REFRESH_RATE_HZ);
 
     private float orientation = 0.0f;
 

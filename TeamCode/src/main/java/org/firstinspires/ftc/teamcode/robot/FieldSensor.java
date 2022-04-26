@@ -4,12 +4,14 @@ import android.graphics.Color;
 
 import androidx.annotation.ColorInt;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.color.ColorReference;
 import org.firstinspires.ftc.teamcode.color.FieldColor;
 
+@Config
 public class FieldSensor extends RobotModule {
 
     public static boolean ADJUST_REFERENCE_ON_INITIALISATION = true;
