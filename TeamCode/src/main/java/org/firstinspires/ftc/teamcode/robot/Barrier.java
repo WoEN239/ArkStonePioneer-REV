@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
-
-import org.firstinspires.ftc.teamcode.util.ServoEx;
+import com.qualcomm.robotcore.hardware.ServoEx;
 
 @Config
 public class Barrier extends RobotModule {
