@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import androidx.annotation.ColorInt;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.color.FieldColor;
 
 import java.util.EnumMap;
 
+@Config
 public class Separator extends RobotModule {
 
     public static DcMotorSimple.Direction SEPARATOR_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
@@ -33,6 +35,9 @@ public class Separator extends RobotModule {
     private final ElapsedTime separatorMotorStallDetectionTimer = new ElapsedTime();
 
     private ColorSensor puckColorSensor;
+
+    private int teamPucksCollected = 0;
+    private int opponentPucksCollected = 0;
 
     @ColorInt
     private int lastReadColorInt = Color.BLACK;
@@ -68,12 +73,19 @@ public class Separator extends RobotModule {
             FieldColor teamColor = robot.fieldSensor.getTeamFieldColor();
             if (lastReadColor == teamColor) {
                 setSeparatorMotorTarget(separatorMotorTarget + SEPARATOR_MOTOR_ROTATION_ENCODER_TICKS);
+                teamPucksCollected++;
             } else if (lastReadColor == teamColor.opposite()) {
                 setSeparatorMotorTarget(separatorMotorTarget - SEPARATOR_MOTOR_ROTATION_ENCODER_TICKS);
+                opponentPucksCollected++;
             }
         }
-        if (separatorMotorStallDetectionTimer.seconds() > SEPARATOR_MOTOR_STALL_DETECTION_S)
+        if (separatorMotorStallDetectionTimer.seconds() > SEPARATOR_MOTOR_STALL_DETECTION_S) {
             setSeparatorMotorTarget(previousSeparatorMotorTarget);
+            if (separatorMotorTarget > previousSeparatorMotorTarget)
+                teamPucksCollected--;
+            else
+                opponentPucksCollected--;
+        }
         //if (!doubleEquals(separatorMotorController.getTarget(), separatorMotorTarget) || separatorMotorController.isAtTarget())
         {
             separatorMotorStallDetectionTimer.reset();
@@ -99,6 +111,14 @@ public class Separator extends RobotModule {
 
     public FieldColor getLastReadColor() {
         return lastReadColor;
+    }
+
+    public int getTeamPucksCollected() {
+        return teamPucksCollected;
+    }
+
+    public int getOpponentPucksCollected() {
+        return opponentPucksCollected;
     }
 
 }
