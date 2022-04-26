@@ -12,6 +12,8 @@ public class WallSensor extends RobotModule {
 
     private boolean nearWall = false;
 
+    private double distanceM = 2.5;
+
     private DistanceSensor distanceSensor1;
     private DistanceSensor distanceSensor2;
 
@@ -27,8 +29,12 @@ public class WallSensor extends RobotModule {
 
     @Override
     public void update() {
-        nearWall = (distanceSensor1.getDistance(DistanceUnit.METER) + distanceSensor2.getDistance(DistanceUnit.METER)) / 2
-                < MIN_DISTANCE_TO_WALL_M;
+        distanceM = (distanceSensor1.getDistance(DistanceUnit.METER) + distanceSensor2.getDistance(DistanceUnit.METER)) / 2;
+        nearWall = distanceM < MIN_DISTANCE_TO_WALL_M;
+    }
+
+    public double getDistanceM() {
+        return distanceM;
     }
 
     public boolean isNearWall() {
