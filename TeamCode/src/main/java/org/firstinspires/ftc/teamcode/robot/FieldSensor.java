@@ -60,6 +60,10 @@ public class FieldSensor extends RobotModule {
         lastReadColor = newReadColor;
     }
 
+    public FieldColor getTeamFieldColor() {
+        return teamFieldColor;
+    }
+
     @ColorInt
     public int getLastReadColorInt() {
         return lastReadColorInt;
