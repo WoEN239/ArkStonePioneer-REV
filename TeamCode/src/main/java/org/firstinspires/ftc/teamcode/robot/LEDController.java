@@ -44,7 +44,7 @@ public class LEDController extends RobotModule {
 
     @Override
     public void update() {
-        if (refreshTimer.seconds() > 1 / REFRESH_RATE_HZ) {
+        if (refreshTimer.seconds() > 1.0 / REFRESH_RATE_HZ) {
             controlHubLED.setConstant(robot.fieldSensor.getLastReadColorInt());
             expansionHubLED.setConstant(robot.separator.getSecondsSinceLastPuckCollection() < PUCK_INDICATION_S ?
                     robot.separator.getLastCollectedPuckColor().toColorInt() : Color.DKGRAY);
