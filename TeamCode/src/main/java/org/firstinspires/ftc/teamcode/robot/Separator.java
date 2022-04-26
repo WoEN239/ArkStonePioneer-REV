@@ -17,7 +17,7 @@ import java.util.EnumMap;
 public class Separator extends RobotModule {
 
     public static DcMotorSimple.Direction SEPARATOR_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
-    public static double SEPARATOR_MOTOR_ROTATION_ENCODER_TICKS = 120;
+    public static double SEPARATOR_MOTOR_ROTATION_ENCODER_TICKS = 120 * 2; // Surprisingly LEGO motors have 720 CPR encoders
     public static double SEPARATOR_MOTOR_STALL_DETECTION_S = 0.25;
     @ColorInt
     public static int RED_PUCK_COLOR_INT = Color.RED;
