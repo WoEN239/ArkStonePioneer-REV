@@ -40,8 +40,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.ServoConfigu
  * ServoImplEx provides access to extended functionality on servos. Instances support
  * both the {@link Servo} and the {@link PwmControl} interfaces.
  */
-public class ServoImplEx extends ServoImpl implements PwmControl
-    {
+public class ServoImplEx extends ServoImpl implements ServoEx {
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------

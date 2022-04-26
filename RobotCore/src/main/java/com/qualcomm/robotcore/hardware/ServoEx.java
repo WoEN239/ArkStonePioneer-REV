@@ -1,7 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
-
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
+package com.qualcomm.robotcore.hardware;
 
 /**
  * Servo with PWM control support

@@ -93,7 +93,7 @@ public enum BuiltInConfigurationType implements ConfigurationType
         LEGACY_MODULE_CONTROLLER("LegacyModuleController", null),
         DEVICE_INTERFACE_MODULE("DeviceInterfaceModule", null),
         @Deprecated I2C_DEVICE("I2cDevice", DeviceFlavor.I2C),
-        @Deprecated I2C_DEVICE_SYNCH("I2cDeviceSynch", DeviceFlavor.I2C),
+        /* @Deprecated */ I2C_DEVICE_SYNCH("I2cDeviceSynch", DeviceFlavor.I2C),
         TOUCH_SENSOR("TouchSensor", DeviceFlavor.DIGITAL_IO),   // either a MR touch sensor on a digital port or an NXT touch sensor
         ANALOG_OUTPUT("AnalogOutput", DeviceFlavor.ANALOG_OUTPUT),
         PULSE_WIDTH_DEVICE("PulseWidthDevice", null),
