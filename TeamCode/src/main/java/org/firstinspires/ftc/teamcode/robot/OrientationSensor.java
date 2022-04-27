@@ -5,7 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2;
 
-import org.firstinspires.ftc.teamcode.util.TimedSensorQuery;
+import org.firstinspires.ftc.teamcode.util.TimedQuery;
 
 @Config
 public class OrientationSensor extends RobotModule {
@@ -18,7 +18,7 @@ public class OrientationSensor extends RobotModule {
 
     public static double REFRESH_RATE_HZ = 100;
 
-    private final TimedSensorQuery<Float> timedGyroQuery = new TimedSensorQuery<>(() -> gyro
+    private final TimedQuery<Float> timedGyroQuery = new TimedQuery<>(() -> gyro
             .getAngularOrientation().firstAngle, REFRESH_RATE_HZ);
 
     private float orientation = 0.0f;
