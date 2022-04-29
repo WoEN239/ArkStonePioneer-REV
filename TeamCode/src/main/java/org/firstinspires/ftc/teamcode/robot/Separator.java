@@ -16,6 +16,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.color.ColorReference;
 import org.firstinspires.ftc.teamcode.color.FieldColor;
+import org.firstinspires.ftc.teamcode.util.LowHighPassLimiter;
+import org.firstinspires.ftc.teamcode.util.PIDVASMotorController;
+import org.firstinspires.ftc.teamcode.util.TimedSender;
 
 import java.util.EnumMap;
 
@@ -25,15 +28,34 @@ public class Separator extends RobotModule {
     public static DcMotorSimple.Direction SEPARATOR_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
     public static DcMotor.ZeroPowerBehavior SEPARATOR_MOTOR_ZEROPOWERBEHAVIOR = DcMotor.ZeroPowerBehavior.BRAKE;
     public static double SEPARATOR_MOTOR_ROTATION_ENCODER_TICKS = 120 * 2; // Surprisingly LEGO motors have 720 CPR encoders
-    public static double SEPARATOR_MOTOR_STALL_DETECTION_S = 0.25;
-    @ColorInt
-    public static int RED_PUCK_COLOR_INT = Color.RED;
-    @ColorInt
-    public static int BLUE_PUCK_COLOR_INT = Color.BLUE;
-    @ColorInt
-    public static int NO_PUCK_COLOR_INT = Color.WHITE;
+    public static double SEPARATOR_MOTOR_STALL_DETECTION_S = 0.8;
 
     private DcMotorEx separatorMotor;
+
+    public static double MOTOR_REFRESH_RATE_HZ = 0.5;
+
+    private final TimedSender<Double> separatorMotorPowerSender = new TimedSender<>(power -> separatorMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
+
+    public static double MIN_SEPARATOR_MOTOR_POWER = 0.1;
+    public static double MAX_SEPARATOR_MOTOR_POWER = 0.75;
+    private final LowHighPassLimiter separatorMotorPowerLimiter = new LowHighPassLimiter(separatorMotorPowerSender::trySend, MIN_SEPARATOR_MOTOR_POWER, MAX_SEPARATOR_MOTOR_POWER);
+
+    public static double VELOCITY_KP = 5.0;
+    public static double VELOCITY_KI = 10.0;
+    public static double VELOCITY_KD = .0;
+    public static double VELOCITY_KV = 6.9;
+    public static double VELOCITY_KS = 4000.0;
+    public static double VELOCITY_MAXI = 6553.4;
+
+    public static double POSITION_KP = 400000.0;
+    public static double POSITION_KI = 10000000.0;
+    public static double POSITION_KD = 1000.0;
+    public static double POSITION_MAXI = 2374.4;
+    public static double POSITION_ERROR_THRESHOLD = 20;
+
+    private PIDVASMotorController motorVelocityController;
+    private PIDVASMotorController motorPositionController;
+
     private double previousSeparatorMotorTarget = 0;
 
     private double separatorMotorTarget = 0;
@@ -81,7 +103,14 @@ public class Separator extends RobotModule {
         separatorMotor = robot.hardware.separatorMotor;
         separatorMotor.setDirection(SEPARATOR_MOTOR_DIRECTION);
         separatorMotor.setZeroPowerBehavior(SEPARATOR_MOTOR_ZEROPOWERBEHAVIOR);
-        //separatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorVelocityController = new PIDVASMotorController(separatorMotorPowerLimiter::update, separatorMotor::getVelocity,
+                () -> VELOCITY_KP, () -> VELOCITY_KI, () -> VELOCITY_KD, () -> VELOCITY_KV, () -> 0, () -> VELOCITY_KS, () -> VELOCITY_MAXI, 0, false);
+        motorPositionController = new PIDVASMotorController(motorVelocityController::update, separatorMotor::getCurrentPosition,
+                () -> POSITION_KP, () -> POSITION_KI, () -> POSITION_KD, () -> 0, () -> 0, () -> 0, () -> POSITION_MAXI, POSITION_ERROR_THRESHOLD, false);
+
+        separatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        separatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
@@ -109,23 +138,20 @@ public class Separator extends RobotModule {
             else
                 opponentPucksCollected--;
         }
-        //if (!doubleEquals(separatorMotorController.getTarget(), separatorMotorTarget) || separatorMotorController.isAtTarget())
-        {
+        if (!doubleEquals(motorPositionController.getTarget(), separatorMotorTarget) || motorPositionController.isAtTarget()) {
             separatorMotorStallDetectionTimer.reset();
         }
-        /*
-        separatorMotorController.setTarget(separatorMotorTarget);
-        separatorMotorController.update();
-         */
+
+        motorPositionController.update(separatorMotorTarget);
     }
 
     public double getSeparatorMotorTarget() {
         return separatorMotorTarget;
     }
 
-    private void setSeparatorMotorTarget(double separatorMotorTarget) {
+    private void setSeparatorMotorTarget(double newSeparatorMotorTarget) {
         this.previousSeparatorMotorTarget = this.separatorMotorTarget;
-        this.separatorMotorTarget = separatorMotorTarget;
+        this.separatorMotorTarget = newSeparatorMotorTarget;
     }
 
     public int getLastReadColorInt() {
