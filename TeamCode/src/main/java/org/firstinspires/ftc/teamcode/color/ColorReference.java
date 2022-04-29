@@ -38,7 +38,7 @@ public class ColorReference {
         EnumMap<FieldColor, Double> radiusMap = new EnumMap(colorReferenceMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, colorReferenceEntry -> {
                     @ColorInt int colorReference = colorReferenceEntry.getValue();
-                    return rgbDistance(red(colorReference), matchColorR, green(colorReference), matchColorG, blue(colorReference), matchColorB);
+                    return rgbDistance(red(colorReference), green(colorReference), blue(colorReference), matchColorR, matchColorG, matchColorB);
                 })));
         return Collections.min(radiusMap.entrySet(), Map.Entry.comparingByValue()).getKey();
     }

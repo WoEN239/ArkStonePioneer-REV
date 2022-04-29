@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static android.graphics.Color.rgb;
+import static org.firstinspires.ftc.teamcode.util.MathUtils.doubleEquals;
+
 import android.graphics.Color;
 
 import androidx.annotation.ColorInt;
@@ -49,11 +52,21 @@ public class Separator extends RobotModule {
     private FieldColor lastCollectedPuckColor = FieldColor.WHITE;
     private final ElapsedTime timeSinceLastPuckCollection = new ElapsedTime();
 
-    private ColorReference puckColorSensorReference = new ColorReference(
+    public static int RED_PUCK_COLOR_R = 148;
+    public static int RED_PUCK_COLOR_G = 25;
+    public static int RED_PUCK_COLOR_B = 1;
+    public static int BLUE_PUCK_COLOR_R = 11;
+    public static int BLUE_PUCK_COLOR_G = 45;
+    public static int BLUE_PUCK_COLOR_B = 120;
+    public static int NO_PUCK_COLOR_R = 110;
+    public static int NO_PUCK_COLOR_G = 128;
+    public static int NO_PUCK_COLOR_B = 108;
+
+    private final ColorReference puckColorSensorReference = new ColorReference(
             new EnumMap<FieldColor, Integer>(FieldColor.class) {{
-                put(FieldColor.RED, Color.RED);
-                put(FieldColor.BLUE, Color.BLUE);
-                put(FieldColor.WHITE, Color.WHITE);
+                put(FieldColor.RED, rgb(RED_PUCK_COLOR_R, RED_PUCK_COLOR_G, RED_PUCK_COLOR_B));
+                put(FieldColor.BLUE, rgb(BLUE_PUCK_COLOR_R, BLUE_PUCK_COLOR_G, BLUE_PUCK_COLOR_B));
+                put(FieldColor.WHITE, rgb(NO_PUCK_COLOR_R, NO_PUCK_COLOR_G, NO_PUCK_COLOR_B));
             }});
 
     public Separator(WoENRobot robot) {
@@ -73,7 +86,7 @@ public class Separator extends RobotModule {
 
     @Override
     public void update() {
-        if (robot.fieldSensor.isOnTeamSquare() /* && !separatorMotorController.isAtTarget() */) {
+        if (!robot.fieldSensor.isOnTeamSquare() && motorPositionController.isAtTarget()) {
             lastReadColorInt = puckColorSensor.argb();
             lastReadColor = puckColorSensorReference.matchClosestColor(lastReadColorInt);
             FieldColor teamColor = robot.fieldSensor.getTeamFieldColor();
