@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.util.CoupledDcMotorEx;
 import org.firstinspires.ftc.teamcode.util.TimedSender;
 
+import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -33,28 +34,20 @@ public class Drivetrain extends RobotModule {
     private final TimedSender<Double> leftMotorPowerSender = new TimedSender<>(power -> leftMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
     private final TimedSender<Double> rightMotorPowerSender = new TimedSender<>(power -> rightMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
 
-    private final Supplier<Stream<DcMotorEx>> allMotors = () -> Stream.of(
-            leftMotor,
-            rightMotor
-    );
-    private double rawForwardPower = 0.0;
-    private double rawTurnPower = 0.0;
+    private final DoubleConsumer leftMotorVoltageCompensator = power -> leftMotorPowerSender.trySend(power * robot.batteryVoltageSensor.getKVoltage());
+    private final DoubleConsumer rightMotorVoltageCompensator = power -> rightMotorPowerSender.trySend(power * robot.batteryVoltageSensor.getKVoltage());
+
 
     public Drivetrain(WoENRobot robot) {
         super(robot);
     }
 
+    private double forwardVelocity = 0.0;
+    private double turnVelocity = 0.0;
+
     public void setRawPower(double rawForwardPower, double rawTurnPower) {
-        this.rawForwardPower = rawForwardPower;
-        this.rawTurnPower = rawTurnPower;
-    }
-
-    public double getForwardEncoderPosition() {
-        return (leftMotor.getCurrentPosition() + rightMotor.getCurrentPosition()) * 0.5;
-    }
-
-    public double getRotationEncoderPosition() {
-        return (leftMotor.getCurrentPosition() - rightMotor.getCurrentPosition()) * 0.5;
+        this.forwardVelocity = rawForwardPower;
+        this.turnVelocity = rawTurnPower;
     }
 
     @Override
@@ -65,6 +58,8 @@ public class Drivetrain extends RobotModule {
         leftMotor.setDirection(LEFT_MOTOR_DIRECTION);
         rightMotor.setDirection(RIGHT_MOTOR_DIRECTION);
 
+        Supplier<Stream<DcMotorEx>> allMotors = () -> Stream.of(leftMotor, rightMotor);
+
         allMotors.get().forEach(dcMotor -> dcMotor.setZeroPowerBehavior(MOTOR_ZEROPOWERBEHAVIOR));
         allMotors.get().forEach(dcMotor -> dcMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER));
         allMotors.get().forEach(dcMotor -> dcMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER));
@@ -72,7 +67,7 @@ public class Drivetrain extends RobotModule {
 
     @Override
     public void update() {
-        leftMotorPowerSender.trySend(rawForwardPower - rawTurnPower);
-        rightMotorPowerSender.trySend(rawForwardPower + rawTurnPower);
+        leftMotorVoltageCompensator.accept(forwardVelocity - turnVelocity);
+        rightMotorVoltageCompensator.accept(forwardVelocity + turnVelocity);
     }
 }

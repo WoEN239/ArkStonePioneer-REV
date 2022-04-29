@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.util.PIDVASMotorController;
 import org.firstinspires.ftc.teamcode.util.TimedSender;
 
 import java.util.EnumMap;
+import java.util.function.DoubleConsumer;
 
 @Config
 public class Separator extends RobotModule {
@@ -36,9 +37,11 @@ public class Separator extends RobotModule {
 
     private final TimedSender<Double> separatorMotorPowerSender = new TimedSender<>(power -> separatorMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
 
+    private final DoubleConsumer separatorMotorVoltageCompensator = power -> separatorMotorPowerSender.trySend(power * robot.batteryVoltageSensor.getKVoltage());
+
     public static double MIN_SEPARATOR_MOTOR_POWER = 0.1;
     public static double MAX_SEPARATOR_MOTOR_POWER = 0.75;
-    private final LowHighPassLimiter separatorMotorPowerLimiter = new LowHighPassLimiter(separatorMotorPowerSender::trySend, MIN_SEPARATOR_MOTOR_POWER, MAX_SEPARATOR_MOTOR_POWER);
+    private final LowHighPassLimiter separatorMotorPowerLimiter = new LowHighPassLimiter(separatorMotorVoltageCompensator::accept, MIN_SEPARATOR_MOTOR_POWER, MAX_SEPARATOR_MOTOR_POWER);
 
     public static double VELOCITY_KP = 5.0;
     public static double VELOCITY_KI = 10.0;

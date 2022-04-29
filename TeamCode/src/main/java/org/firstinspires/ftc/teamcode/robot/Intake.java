@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.util.TimedSender;
 
+import java.util.function.DoubleConsumer;
+
 @Config
 public class Intake extends RobotModule {
 
@@ -18,8 +20,12 @@ public class Intake extends RobotModule {
     private DcMotorEx rightBrushMotor;
 
     public static double MOTOR_REFRESH_RATE_HZ = 0.1;
+
     private final TimedSender<Double> leftBrushMotorPowerSender = new TimedSender<>(power -> leftBrushMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
     private final TimedSender<Double> rightBrushMotorPowerSender = new TimedSender<>(power -> rightBrushMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
+
+    private final DoubleConsumer leftBrushMotorVoltageCompensator = power -> leftBrushMotorPowerSender.trySend(power * robot.batteryVoltageSensor.getKVoltage());
+    private final DoubleConsumer rightBrushMotorVoltageCompensator = power -> rightBrushMotorPowerSender.trySend(power * robot.batteryVoltageSensor.getKVoltage());
 
 
     public boolean isIntakeEnabled() {
@@ -56,7 +62,7 @@ public class Intake extends RobotModule {
 
     @Override
     public void update() {
-        leftBrushMotorPowerSender.trySend(enableIntake ? BRUSH_POWER : 0);
-        rightBrushMotorPowerSender.trySend(enableIntake ? BRUSH_POWER : 0);
+        leftBrushMotorVoltageCompensator.accept(enableIntake ? BRUSH_POWER : 0);
+        rightBrushMotorVoltageCompensator.accept(enableIntake ? BRUSH_POWER : 0);
     }
 }
