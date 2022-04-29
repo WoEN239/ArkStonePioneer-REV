@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.ServoEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.hardware.android.Rev3328;
-import org.firstinspires.ftc.teamcode.util.FakeDcMotorEx;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;
