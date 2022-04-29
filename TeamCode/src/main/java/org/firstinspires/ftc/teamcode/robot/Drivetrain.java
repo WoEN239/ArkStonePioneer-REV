@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.util.CoupledDcMotorEx;
+import org.firstinspires.ftc.teamcode.util.TimedSender;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -27,7 +28,12 @@ public class Drivetrain extends RobotModule {
     private DcMotorEx leftMotor;
     private DcMotorEx rightMotor;
 
-    private Supplier<Stream<DcMotorEx>> allMotors = () -> Stream.of(
+    public static double MOTOR_REFRESH_RATE_HZ = 0.5;
+
+    private final TimedSender<Double> leftMotorPowerSender = new TimedSender<>(power -> leftMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
+    private final TimedSender<Double> rightMotorPowerSender = new TimedSender<>(power -> rightMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
+
+    private final Supplier<Stream<DcMotorEx>> allMotors = () -> Stream.of(
             leftMotor,
             rightMotor
     );
@@ -41,6 +47,14 @@ public class Drivetrain extends RobotModule {
     public void setRawPower(double rawForwardPower, double rawTurnPower) {
         this.rawForwardPower = rawForwardPower;
         this.rawTurnPower = rawTurnPower;
+    }
+
+    public double getForwardEncoderPosition() {
+        return (leftMotor.getCurrentPosition() + rightMotor.getCurrentPosition()) * 0.5;
+    }
+
+    public double getRotationEncoderPosition() {
+        return (leftMotor.getCurrentPosition() - rightMotor.getCurrentPosition()) * 0.5;
     }
 
     @Override
@@ -58,7 +72,7 @@ public class Drivetrain extends RobotModule {
 
     @Override
     public void update() {
-        leftMotor.setPower(rawForwardPower - rawTurnPower);
-        rightMotor.setPower(rawForwardPower + rawTurnPower);
+        leftMotorPowerSender.trySend(rawForwardPower - rawTurnPower);
+        rightMotorPowerSender.trySend(rawForwardPower + rawTurnPower);
     }
 }

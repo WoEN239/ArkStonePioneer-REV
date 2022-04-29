@@ -16,19 +16,22 @@ public class OrientationSensor extends RobotModule {
 
     private BNO055IMU gyro;
 
-    public static double REFRESH_RATE_HZ = 100;
+    public static double SENSOR_REFRESH_RATE_HZ = 80;
+    public static LynxI2cDeviceSynch.BusSpeed I2C_BUS_SPEED = LynxI2cDeviceSynch.BusSpeed.FAST_400K;
 
     private final TimedQuery<Float> timedGyroQuery = new TimedQuery<>(() -> gyro
-            .getAngularOrientation().firstAngle, REFRESH_RATE_HZ);
+            .getAngularOrientation().firstAngle, SENSOR_REFRESH_RATE_HZ);
 
     private float orientation = 0.0f;
+
+    private static final int I2C_BUS = 0;
 
     @Override
     public void initialize() {
         gyro = robot.hardware.imu;
         gyro.initialize(new BNO055IMU.Parameters());
-        new LynxI2cDeviceSynchV2(robot.opMode.hardwareMap.appContext, robot.hardware.controlHub, 0)
-                .setBusSpeed(LynxI2cDeviceSynch.BusSpeed.FAST_400K);
+        new LynxI2cDeviceSynchV2(robot.opMode.hardwareMap.appContext, robot.hardware.controlHub, I2C_BUS)
+                .setBusSpeed(I2C_BUS_SPEED);
         orientation = timedGyroQuery.getValue();
     }
 

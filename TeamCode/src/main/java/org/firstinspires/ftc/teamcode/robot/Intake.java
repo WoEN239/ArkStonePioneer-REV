@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.util.TimedSender;
+
+@Config
 public class Intake extends RobotModule {
 
     public static DcMotorSimple.Direction LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
@@ -12,6 +16,11 @@ public class Intake extends RobotModule {
 
     private DcMotorEx leftBrushMotor;
     private DcMotorEx rightBrushMotor;
+
+    public static double MOTOR_REFRESH_RATE_HZ = 0.1;
+    private final TimedSender<Double> leftBrushMotorPowerSender = new TimedSender<>(power -> leftBrushMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
+    private final TimedSender<Double> rightBrushMotorPowerSender = new TimedSender<>(power -> rightBrushMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
+
 
     public boolean isIntakeEnabled() {
         return enableIntake;
@@ -47,7 +56,7 @@ public class Intake extends RobotModule {
 
     @Override
     public void update() {
-        leftBrushMotor.setPower(enableIntake ? BRUSH_POWER : 0);
-        rightBrushMotor.setPower(enableIntake ? BRUSH_POWER : 0);
+        leftBrushMotorPowerSender.trySend(enableIntake ? BRUSH_POWER : 0);
+        rightBrushMotorPowerSender.trySend(enableIntake ? BRUSH_POWER : 0);
     }
 }
