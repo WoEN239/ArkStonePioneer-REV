@@ -22,7 +22,7 @@ public class LowHighPassLimiter {
                 (value) > higherBound ?
                         higherBound * signum(value) :
                         abs(value) < lowerBound ?
-                                (abs(value) < lowerBound / 2 ? 0 : lowerBound) :
+                                (abs(value) < lowerBound / 2 ? 0 : lowerBound * 0.5) :
                                 value);
     }
 }
