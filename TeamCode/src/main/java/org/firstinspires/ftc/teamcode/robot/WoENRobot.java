@@ -5,6 +5,8 @@ import android.graphics.Color;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.R;
+
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -19,6 +21,8 @@ public class WoENRobot {
     public final FieldSensor fieldSensor = new FieldSensor(this);
     public final OrientationSensor orientationSensor = new OrientationSensor(this);
     public final WallSensor wallSensor = new WallSensor(this);
+    public final BatteryVoltageSensor batteryVoltageSensor = new BatteryVoltageSensor(this);
+    public final RefreshRateAnalyzer refreshRateAnalyzer = new RefreshRateAnalyzer();
     protected final Hardware hardware;
     protected final LinearOpMode opMode;
     private final Supplier<Stream<LoopedSubsystem>> allModules = () -> Stream.of(
@@ -30,7 +34,9 @@ public class WoENRobot {
             barrier,
             fieldSensor,
             orientationSensor,
-            wallSensor
+            wallSensor,
+            batteryVoltageSensor,
+            refreshRateAnalyzer
     );
 
     public WoENRobot(LinearOpMode opMode) {
