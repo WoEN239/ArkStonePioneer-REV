@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.usbserial;
 
 public class SerialCommand {
 
+    /*
     private final byte[] byteArray;
 
     public SerialCommand(CommandType commandType){
@@ -35,4 +36,6 @@ public class SerialCommand {
         CMD_SETSERVOPOSITION,
         CMD_READDISTANCE
     }
+
+     */
 }

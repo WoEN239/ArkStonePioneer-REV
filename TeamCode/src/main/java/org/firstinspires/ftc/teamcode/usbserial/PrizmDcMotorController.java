@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.usbserial;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+public class PrizmDcMotorController /* implements DcMotorController */ {
 
-public class PrizmDcMotorController implements DcMotorController {
+    /*
 
     @Override
     public void setMotorType(int motor, MotorConfigurationType motorType) {
@@ -105,4 +103,6 @@ public class PrizmDcMotorController implements DcMotorController {
     public void close() {
 
     }
+
+     */
 }

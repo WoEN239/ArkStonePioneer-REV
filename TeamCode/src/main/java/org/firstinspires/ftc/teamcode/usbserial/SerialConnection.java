@@ -1,35 +1,8 @@
 package org.firstinspires.ftc.teamcode.usbserial;
 
-import static org.firstinspires.ftc.teamcode.usbserial.ArrayUtils.concatArray;
-import static org.firstinspires.ftc.teamcode.usbserial.ArrayUtils.truncateArray;
+public class SerialConnection /*implements OpModeManagerNotifier.Notifications */ {
 
-import android.app.Activity;
-import android.content.Context;
-import android.hardware.usb.UsbDeviceConnection;
-import android.hardware.usb.UsbManager;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.hoho.android.usbserial.driver.CdcAcmSerialDriver;
-import com.hoho.android.usbserial.driver.ProbeTable;
-import com.hoho.android.usbserial.driver.UsbSerialDriver;
-import com.hoho.android.usbserial.driver.UsbSerialPort;
-import com.hoho.android.usbserial.driver.UsbSerialProber;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-
-import java.io.IOException;
-import java.sql.Time;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-public class SerialConnection implements OpModeManagerNotifier.Notifications {
+    /*
 
     private static final int BAUD_RATE = 115200;
     private static final int USB_VID = 0x0403;
@@ -107,6 +80,7 @@ public class SerialConnection implements OpModeManagerNotifier.Notifications {
             } catch (IOException exception) {
             }*/
 
+    /*
             UsbSerialDriver driver;
 
             // Open a connection to the first available driver.
@@ -178,4 +152,5 @@ public class SerialConnection implements OpModeManagerNotifier.Notifications {
         } catch (IOException ignored) {
         }
     }
+    */
 }

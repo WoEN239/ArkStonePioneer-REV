@@ -1,23 +1,9 @@
 package org.firstinspires.ftc.teamcode.usbserial;
 
 
-import static java.lang.Math.sin;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import java.io.IOException;
-import java.util.Arrays;
-
 //@TeleOp
 //@Config
-public class SerialTest extends LinearOpMode {
+public class SerialTest /*extends LinearOpMode */ {
 
     /*
     private static final int BAUD_RATE = 115200;
@@ -92,6 +78,7 @@ public class SerialTest extends LinearOpMode {
 
      */
 
+    /*
 
     @Override
     public void runOpMode() {
@@ -135,8 +122,8 @@ public class SerialTest extends LinearOpMode {
         while (opModeIsActive()) {
             //if (serialConnection.isConnectionActive()) {
             double power = .25 * sin(elapsedTime.seconds() * 5); //* sin(elapsedTime.seconds() * 3.14);
-           serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 1, (int) (100.0 * power)));
-           serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 2, (int) ((gamepad1.left_trigger - gamepad1.right_trigger)* 100.0)));
+            serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 1, (int) (100.0 * power)));
+            serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_SETMOTORPOWER, 0, 2, (int) ((gamepad1.left_trigger - gamepad1.right_trigger) * 100.0)));
             dcMotor.setPower(power);
             byte[] response = serialConnection.sendCommand(new SerialCommand(SerialCommand.CommandType.CMD_READENCODER, 0, 1));
             if (response != null) {
@@ -148,4 +135,6 @@ public class SerialTest extends LinearOpMode {
             telemetry.update();
         }
     }
+
+     */
 }
