@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static org.firstinspires.ftc.teamcode.util.MathUtils.getSineWave;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 
@@ -34,12 +35,6 @@ public class LEDController extends RobotModule {
 
         controlHubLED = robot.hardware.controlHubLED;
         expansionHubLED = robot.hardware.expansionHubLED;
-    }
-
-    private static final double MILLIS_TO_RADIANS = PI * 2.0 * 0.001;
-
-    public double getSineWave(double period) {
-        return 0.5 - cos(System.currentTimeMillis() * period * MILLIS_TO_RADIANS) * 0.5;
     }
 
     @Override
