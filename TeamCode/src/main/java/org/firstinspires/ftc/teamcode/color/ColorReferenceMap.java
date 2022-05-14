@@ -24,7 +24,7 @@ public class ColorReferenceMap implements ColorReference{
         int matchColorR = red(matchColor);
         int matchColorG = green(matchColor);
         int matchColorB = blue(matchColor);
-        EnumMap<FieldColor, Double> radiusMap = new EnumMap<>(referenceMap.entrySet().stream()
+        EnumMap<FieldColor, Double> radiusMap = new EnumMap(referenceMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, colorReferenceEntry -> {
                     @ColorInt int colorReference = colorReferenceEntry.getValue();
                     return rgbDistance(red(colorReference), green(colorReference), blue(colorReference), matchColorR, matchColorG, matchColorB);
