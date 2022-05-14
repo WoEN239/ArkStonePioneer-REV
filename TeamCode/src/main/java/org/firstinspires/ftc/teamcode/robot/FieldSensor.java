@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.color.ColorReference;
+import org.firstinspires.ftc.teamcode.color.ColorReferenceMap;
 import org.firstinspires.ftc.teamcode.color.FieldColor;
 import org.firstinspires.ftc.teamcode.util.TimedQuery;
 
@@ -49,7 +50,7 @@ public class FieldSensor extends RobotModule {
     public static int WHITE_FIELD_COLOR_G = green(Color.WHITE);
     public static int WHITE_FIELD_COLOR_B = blue(Color.WHITE);
 
-    private final ColorReference fieldColorSensorReference = new ColorReference(
+    private final ColorReference fieldColorSensorReference = new ColorReferenceMap(
             new EnumMap<FieldColor, Integer>(FieldColor.class) {{
                 put(FieldColor.RED, rgb(RED_FIELD_COLOR_R, RED_FIELD_COLOR_G, RED_FIELD_COLOR_B));
                 put(FieldColor.BLUE, rgb(BLUE_FIELD_COLOR_R, BLUE_FIELD_COLOR_G, BLUE_FIELD_COLOR_B));
