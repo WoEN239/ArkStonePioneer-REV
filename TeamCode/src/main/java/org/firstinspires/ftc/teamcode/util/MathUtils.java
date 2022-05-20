@@ -7,6 +7,7 @@ import static java.lang.Math.cos;
 public final class MathUtils {
 
     public static final double EPSILON = 1e-5;
+    private static final double MILLIS_TO_RADIANS = PI * 2.0 * 0.001;
 
     public static double sqr(double num) {
         return num * num;
@@ -16,10 +17,13 @@ public final class MathUtils {
         return abs(d1 - d2) < EPSILON;
     }
 
-
-    private static final double MILLIS_TO_RADIANS = PI * 2.0 * 0.001;
-
     public static double getSineWave(double period) {
         return 0.5 - cos(System.currentTimeMillis() * period * MILLIS_TO_RADIANS) * 0.5;
+    }
+
+    public static double angleWrap(double angle) {
+        while (angle > PI) angle -= PI * 2;
+        while (angle < -PI) angle += PI * 2;
+        return angle;
     }
 }
