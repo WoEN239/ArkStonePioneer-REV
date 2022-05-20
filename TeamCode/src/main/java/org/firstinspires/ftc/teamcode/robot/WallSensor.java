@@ -11,9 +11,9 @@ import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 @Config
 public class WallSensor extends RobotModule {
 
-    public static double MIN_DISTANCE_TO_WALL_M = 0.15;
-    public static DistanceMode DISTANCE_MODE = DistanceMode.AVERAGE;
-    public static AsyncRev2MSensor.AccuracyMode ACCURACY_MODE = AsyncRev2MSensor.AccuracyMode.MODE_HIGH_ACCURACY;
+    public static volatile double MIN_DISTANCE_TO_WALL_M = 0.15;
+    public static volatile DistanceMode DISTANCE_MODE = DistanceMode.AVERAGE;
+    public static volatile AsyncRev2MSensor.AccuracyMode ACCURACY_MODE = AsyncRev2MSensor.AccuracyMode.MODE_HIGH_ACCURACY;
     private boolean nearWall = false;
     private double distanceM = 2.5;
     private AsyncRev2MSensor leftDistanceSensor;

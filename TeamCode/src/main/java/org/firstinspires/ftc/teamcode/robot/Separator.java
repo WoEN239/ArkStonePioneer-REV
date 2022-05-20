@@ -27,10 +27,10 @@ import java.util.function.DoubleConsumer;
 @Config
 public class Separator extends RobotModule {
 
-    public static DcMotorSimple.Direction MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
-    public static DcMotor.ZeroPowerBehavior MOTOR_ZEROPOWERBEHAVIOR = DcMotor.ZeroPowerBehavior.BRAKE;
-    public static double MOTOR_ROTATION_ENCODER_TICKS = 120 * 2; // Surprisingly LEGO motors have 720 CPR encoders
-    public static double MOTOR_STALL_DETECTION_S = 0.8;
+    public static volatile DcMotorSimple.Direction MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+    public static volatile DcMotor.ZeroPowerBehavior MOTOR_ZEROPOWERBEHAVIOR = DcMotor.ZeroPowerBehavior.BRAKE;
+    public static volatile double MOTOR_ROTATION_ENCODER_TICKS = 120 * 2; // Surprisingly LEGO motors have 720 CPR encoders
+    public static volatile double MOTOR_STALL_DETECTION_S = 0.8;
 
     private DcMotorEx separatorMotor;
 
@@ -38,36 +38,36 @@ public class Separator extends RobotModule {
 
     private static final double MOTOR_RPM_TO_TPS_RATIO = MOTOR_CPR /60.0;
 
-    public static double MOTOR_REFRESH_RATE_HZ = 0.5;
+    public static volatile double MOTOR_REFRESH_RATE_HZ = 0.5;
 
     private final TimedSender<Double> separatorMotorPowerSender = new TimedSender<>(power -> separatorMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
 
     private final DoubleConsumer separatorMotorVoltageCompensator = power -> separatorMotorPowerSender.trySend(power * robot.batteryVoltageSensor.getKVoltage());
 
-    public static double MIN_MOTOR_POWER = 0.1;
-    public static double MAX_MOTOR_POWER = 1.0;
+    public static volatile double MIN_MOTOR_POWER = 0.1;
+    public static volatile double MAX_MOTOR_POWER = 1.0;
 
     private final LowHighPassLimiter separatorMotorPowerLimiter = new LowHighPassLimiter(separatorMotorVoltageCompensator::accept, MIN_MOTOR_POWER, MAX_MOTOR_POWER);
 
 
 
-    public static double VELOCITY_KP = 5.0;
-    public static double VELOCITY_KI = 10.0;
-    public static double VELOCITY_KD = .0;
-    public static double VELOCITY_KV = 6.9;
-    public static double VELOCITY_KS = 4000.0;
-    public static double VELOCITY_MAXI = 6553.4;
+    public static volatile double VELOCITY_KP = 5.0;
+    public static volatile double VELOCITY_KI = 10.0;
+    public static volatile double VELOCITY_KD = .0;
+    public static volatile double VELOCITY_KV = 6.9;
+    public static volatile double VELOCITY_KS = 4000.0;
+    public static volatile double VELOCITY_MAXI = 6553.4;
 
-    public static double POSITION_KP = 400000.0;
-    public static double POSITION_KI = 10000000.0;
-    public static double POSITION_KD = 1000.0;
-    public static double POSITION_MAXI = 2374.4;
-    public static double POSITION_ERROR_THRESHOLD = 20;
+    public static volatile double POSITION_KP = 400000.0;
+    public static volatile double POSITION_KI = 10000000.0;
+    public static volatile double POSITION_KD = 1000.0;
+    public static volatile double POSITION_MAXI = 2374.4;
+    public static volatile double POSITION_ERROR_THRESHOLD = 20;
 
     private PIDVASMotorController motorVelocityController;
 
-    public static double MIN_MOTOR_RPM = 0.0;
-    public static double MAX_MOTOR_RPM = 350.0;
+    public static volatile double MIN_MOTOR_RPM = 0.0;
+    public static volatile double MAX_MOTOR_RPM = 350.0;
 
     private final LowHighPassLimiter separatorMotorVelocityLimiter = new LowHighPassLimiter(motorVelocityController::update,
             MIN_MOTOR_RPM * MOTOR_RPM_TO_TPS_RATIO,
@@ -94,15 +94,15 @@ public class Separator extends RobotModule {
     private FieldColor lastCollectedPuckColor = FieldColor.WHITE;
     private final ElapsedTime timeSinceLastPuckCollection = new ElapsedTime();
 
-    public static int RED_PUCK_COLOR_R = 148;
-    public static int RED_PUCK_COLOR_G = 25;
-    public static int RED_PUCK_COLOR_B = 1;
-    public static int BLUE_PUCK_COLOR_R = 11;
-    public static int BLUE_PUCK_COLOR_G = 45;
-    public static int BLUE_PUCK_COLOR_B = 120;
-    public static int NO_PUCK_COLOR_R = 110;
-    public static int NO_PUCK_COLOR_G = 128;
-    public static int NO_PUCK_COLOR_B = 108;
+    public static volatile int RED_PUCK_COLOR_R = 148;
+    public static volatile int RED_PUCK_COLOR_G = 25;
+    public static volatile int RED_PUCK_COLOR_B = 1;
+    public static volatile int BLUE_PUCK_COLOR_R = 11;
+    public static volatile int BLUE_PUCK_COLOR_G = 45;
+    public static volatile int BLUE_PUCK_COLOR_B = 120;
+    public static volatile int NO_PUCK_COLOR_R = 110;
+    public static volatile int NO_PUCK_COLOR_G = 128;
+    public static volatile int NO_PUCK_COLOR_B = 108;
 
     private final ColorReference puckColorSensorReference = new ColorReferenceMap(
             new EnumMap<FieldColor, Integer>(FieldColor.class) {{

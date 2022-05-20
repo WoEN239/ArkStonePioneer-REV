@@ -12,14 +12,14 @@ import java.util.function.DoubleConsumer;
 @Config
 public class Intake extends RobotModule {
 
-    public static DcMotorSimple.Direction LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
-    public static DcMotorSimple.Direction RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
-    public static double BRUSH_POWER = 0.75;
+    public static volatile DcMotorSimple.Direction LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+    public static volatile DcMotorSimple.Direction RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
+    public static volatile double BRUSH_POWER = 0.75;
 
     private DcMotorEx leftBrushMotor;
     private DcMotorEx rightBrushMotor;
 
-    public static double MOTOR_REFRESH_RATE_HZ = 0.1;
+    public static volatile double MOTOR_REFRESH_RATE_HZ = 0.1;
 
     private final TimedSender<Double> leftBrushMotorPowerSender = new TimedSender<>(power -> leftBrushMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);
     private final TimedSender<Double> rightBrushMotorPowerSender = new TimedSender<>(power -> rightBrushMotor.setPower(power), MOTOR_REFRESH_RATE_HZ);

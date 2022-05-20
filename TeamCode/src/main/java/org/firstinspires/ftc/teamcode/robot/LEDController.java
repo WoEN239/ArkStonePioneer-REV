@@ -14,9 +14,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 public class LEDController extends RobotModule {
 
-    public static double REFRESH_RATE_HZ = 15;
-    public static double PUCK_INDICATION_S = 2.0;
-    public static double LED_STRIP_BREATHE_PERIOD = 1.0;
+    public static volatile double REFRESH_RATE_HZ = 15;
+    public static volatile double PUCK_INDICATION_S = 2.0;
+    public static volatile double LED_STRIP_BREATHE_PERIOD = 1.0;
 
     private final ElapsedTime refreshTimer = new ElapsedTime();
 

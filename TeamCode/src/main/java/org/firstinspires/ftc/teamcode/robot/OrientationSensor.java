@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.util.TimedQuery;
 public class OrientationSensor extends RobotModule {
 
     private static final int I2C_BUS = 0;
-    public static double SENSOR_REFRESH_RATE_HZ = 50;
-    public static LynxI2cDeviceSynch.BusSpeed I2C_BUS_SPEED = LynxI2cDeviceSynch.BusSpeed.FAST_400K;
+    public static volatile double SENSOR_REFRESH_RATE_HZ = 50;
+    public static volatile LynxI2cDeviceSynch.BusSpeed I2C_BUS_SPEED = LynxI2cDeviceSynch.BusSpeed.FAST_400K;
     private BNO055IMU gyro;
     private final TimedQuery<Float> timedGyroQuery = new TimedQuery<>(() -> gyro
             .getAngularOrientation().firstAngle, SENSOR_REFRESH_RATE_HZ);

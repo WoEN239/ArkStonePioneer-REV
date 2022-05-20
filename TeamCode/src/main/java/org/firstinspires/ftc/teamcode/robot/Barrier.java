@@ -13,17 +13,17 @@ public class Barrier extends RobotModule {
 
     private ServoEx barrierServo;
 
-    public static double SERVO_REFRESH_RATE_HZ = 0.25;
+    public static volatile double SERVO_REFRESH_RATE_HZ = 0.25;
 
     private final TimedSender<Double> barrierServoPositionSender = new TimedSender<>(position -> barrierServo.setPosition(position), SERVO_REFRESH_RATE_HZ);
 
-    public static double BARRIER_OPEN = 0.25;
-    public static double BARRIER_CLOSE = 0.5;
+    public static volatile double BARRIER_OPEN = 0.25;
+    public static volatile double BARRIER_CLOSE = 0.5;
 
     public static boolean USE_ANGLE = true;
 
-    public static float MIN_OPEN_ANGLE = (float) toRadians(-15f);
-    public static float MAX_OPEN_ANGLE = (float) toRadians(105f);
+    public static volatile float MIN_OPEN_ANGLE = (float) toRadians(-15f);
+    public static volatile float MAX_OPEN_ANGLE = (float) toRadians(105f);
 
     private final ElapsedTime timeSinceLastBarrierOpening = new ElapsedTime();
 

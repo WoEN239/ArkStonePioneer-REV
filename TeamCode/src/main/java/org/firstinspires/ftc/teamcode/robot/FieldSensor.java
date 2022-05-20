@@ -23,11 +23,11 @@ import java.util.EnumMap;
 @Config
 public class FieldSensor extends RobotModule {
 
-    public static boolean ADJUST_REFERENCE_ON_INITIALISATION = true;
-    public static boolean PICK_COLOR_DYNAMICALLY = true;
-    public static FieldColor PRESELECTED_TEAM_COLOR = FieldColor.RED;
-    public static double COLOR_DETECTION_TIME_WINDOW_S = .15;
-    public static double SENSOR_REFRESH_RATE_HZ = 5;
+    public static volatile boolean ADJUST_REFERENCE_ON_INITIALISATION = true;
+    public static volatile boolean PICK_COLOR_DYNAMICALLY = true;
+    public static volatile FieldColor PRESELECTED_TEAM_COLOR = FieldColor.RED;
+    public static volatile double COLOR_DETECTION_TIME_WINDOW_S = .15;
+    public static volatile double SENSOR_REFRESH_RATE_HZ = 5;
 
     private ColorSensor fieldColorSensor;
 
@@ -40,15 +40,15 @@ public class FieldSensor extends RobotModule {
     private FieldColor detectedColor = FieldColor.WHITE;
     private FieldColor lastReadColor = FieldColor.WHITE;
 
-    public static int RED_FIELD_COLOR_R = red(Color.RED);
-    public static int RED_FIELD_COLOR_G = green(Color.RED);
-    public static int RED_FIELD_COLOR_B = blue(Color.RED);
-    public static int BLUE_FIELD_COLOR_R = red(Color.BLUE);
-    public static int BLUE_FIELD_COLOR_G = green(Color.BLUE);
-    public static int BLUE_FIELD_COLOR_B = blue(Color.BLUE);
-    public static int WHITE_FIELD_COLOR_R = red(Color.WHITE);
-    public static int WHITE_FIELD_COLOR_G = green(Color.WHITE);
-    public static int WHITE_FIELD_COLOR_B = blue(Color.WHITE);
+    public static volatile int RED_FIELD_COLOR_R = red(Color.RED);
+    public static volatile int RED_FIELD_COLOR_G = green(Color.RED);
+    public static volatile int RED_FIELD_COLOR_B = blue(Color.RED);
+    public static volatile int BLUE_FIELD_COLOR_R = red(Color.BLUE);
+    public static volatile int BLUE_FIELD_COLOR_G = green(Color.BLUE);
+    public static volatile int BLUE_FIELD_COLOR_B = blue(Color.BLUE);
+    public static volatile int WHITE_FIELD_COLOR_R = red(Color.WHITE);
+    public static volatile int WHITE_FIELD_COLOR_G = green(Color.WHITE);
+    public static volatile int WHITE_FIELD_COLOR_B = blue(Color.WHITE);
 
     private final ColorReference fieldColorSensorReference = new ColorReferenceMap(
             new EnumMap<FieldColor, Integer>(FieldColor.class) {{

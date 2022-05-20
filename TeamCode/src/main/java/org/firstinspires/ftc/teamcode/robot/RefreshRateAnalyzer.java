@@ -8,7 +8,7 @@ public class RefreshRateAnalyzer implements LoopedSubsystem {
 
     ElapsedTime loopTimer = new ElapsedTime();
 
-    private static double ANALYZE_TIME_SECONDS = 1.0;
+    private static volatile double ANALYZE_TIME_SECONDS = 1.0;
 
     private int counter;
 
