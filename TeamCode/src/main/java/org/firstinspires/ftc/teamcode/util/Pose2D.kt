@@ -1,88 +1,72 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.util
 
-import static org.firstinspires.ftc.teamcode.util.MathUtils.angleWrap;
-import static org.firstinspires.ftc.teamcode.util.MathUtils.doubleEquals;
-import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.toDegrees;
+import kotlin.jvm.JvmOverloads
+import java.util.*
 
-import androidx.annotation.NonNull;
-
-import java.util.Locale;
-
-public class Pose2D {
-
-    public double x, y, heading;
-
-    public Pose2D() {
-        this(0, 0, 0);
+class Pose2D @JvmOverloads constructor(var x: Double = 0.0, var y: Double = 0.0, heading: Double = 0.0) {
+    var heading: Double
+    operator fun plus(p2: Pose2D): Pose2D {
+        return Pose2D(x + p2.x, y + p2.y, heading + p2.heading)
     }
 
-    public Pose2D(double x, double y, double heading) {
-        this.x = x;
-        this.y = y;
-        this.heading = angleWrap(heading);
+    operator fun times(p2: Pose2D): Pose2D {
+        return Pose2D(x * p2.x, y * p2.y, heading * p2.heading)
     }
 
-    public Pose2D plus(@NonNull Pose2D p2) {
-        return new Pose2D(x + p2.x, y + p2.y, heading + p2.heading);
+    operator fun div(p2: Pose2D): Pose2D {
+        return Pose2D(x / p2.x, y / p2.y, heading / p2.heading)
     }
 
-
-    public Pose2D times(@NonNull Pose2D p2) {
-        return new Pose2D(x * p2.x, y * p2.y, heading * p2.heading);
+    operator fun minus(p2: Pose2D): Pose2D {
+        return Pose2D(x - p2.x, y - p2.y, heading - p2.heading)
     }
 
-    public Pose2D div(@NonNull Pose2D p2) {
-        return new Pose2D(x / p2.x, y / p2.y, heading / p2.heading);
+    operator fun times(d: Double): Pose2D {
+        return Pose2D(x * d, y * d, heading * d)
     }
 
-    public Pose2D minus(@NonNull Pose2D p2) {
-        return new Pose2D(x - p2.x, y - p2.y, heading - p2.heading);
+    fun atan(): Double {
+        return Math.atan2(y, x)
     }
 
-    public Pose2D times(double d) {
-        return new Pose2D(x * d, y * d, heading * d);
+    fun aCot(): Double {
+        return Math.atan2(x, y)
     }
 
-    public double atan() {
-        return atan2(y, x);
+    fun rotatedCW(angle: Double): Pose2D {
+        val sinA = Math.sin(angle)
+        val cosA = Math.cos(angle)
+        return Pose2D(x * cosA + y * sinA, -x * sinA + y * cosA, heading)
     }
 
-    public double aCot() {
-        return atan2(x, y);
+    fun rotated(angle: Double): Pose2D {
+        val sinA = Math.sin(angle)
+        val cosA = Math.cos(angle)
+        return Pose2D(x * cosA - y * sinA, x * sinA + y * cosA, heading)
     }
 
-    public Pose2D rotatedCW(double angle) {
-        double sinA = sin(angle);
-        double cosA = cos(angle);
-        return new Pose2D(x * cosA + y * sinA, -x * sinA + y * cosA, heading);
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Pose2D) return false
+        return MathUtils.doubleEquals(x, other.x) && MathUtils.doubleEquals(y, other.y) && MathUtils.doubleEquals(heading, other.heading)
     }
 
-    public Pose2D rotated(double angle) {
-        double sinA = sin(angle);
-        double cosA = cos(angle);
-        return new Pose2D(x * cosA - y * sinA, x * sinA + y * cosA, heading);
+    override fun toString(): String {
+        return String.format(Locale.getDefault(), "{x: %.3f, y: %.3f, θ: %.3f}", x, y, Math.toDegrees(heading))
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Pose2D)) return false;
-        Pose2D pose2D = (Pose2D) o;
-        return doubleEquals(x, pose2D.x) && doubleEquals(y, pose2D.y) && doubleEquals(heading, pose2D.heading);
+    fun clone(): Pose2D {
+        return Pose2D(x, y, heading)
     }
 
-    @Override
-    public String toString() {
-        return String.format(Locale.getDefault(), "{x: %.3f, y: %.3f, θ: %.3f}", x, y, toDegrees(heading));
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        result = 31 * result + heading.hashCode()
+        return result
     }
 
-    @NonNull
-    @Override
-    public Pose2D clone() {
-        return new Pose2D(this.x, this.y, this.heading);
+    init {
+        this.heading = MathUtils.angleWrap(heading)
     }
 }
