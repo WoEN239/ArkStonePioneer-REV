@@ -5,12 +5,14 @@ import com.qualcomm.hardware.hitechnic.HiTechnicNxtColorSensor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
+import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.ServoEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -22,9 +24,11 @@ import java.util.stream.Stream;
 public class Hardware {
 
     protected final DcMotorEx leftBrushMotor;
-    protected final DcMotorEx rightBrushMotor;
+    //protected final DcMotorEx rightBrushMotor;
 
     protected final DcMotorSimple ledStrip;
+
+    protected final DcMotor rgbFan;
 
     protected final DistanceSensor leftDistanceSensor;
     protected final DistanceSensor rightDistanceSensor;
@@ -57,10 +61,12 @@ public class Hardware {
     protected final VoltageSensor batteryVoltageSensor;
 
     protected final DigitalChannel controlHubButton;
+    protected final DigitalChannel startButton;
+    protected final LED indicatorLED;
 
     public Hardware(HardwareMap hardwareMap) {
         leftBrushMotor = hardwareMap.get(DcMotorEx.class, "leftBrushMotor");
-        rightBrushMotor = hardwareMap.get(DcMotorEx.class, "rightBrushMotor");
+        //rightBrushMotor = hardwareMap.get(DcMotorEx.class, "rightBrushMotor");
 
         leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "leftDistanceSensor");
         rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "rightDistanceSensor");
@@ -85,6 +91,8 @@ public class Hardware {
 
         ledStrip = hardwareMap.get(DcMotorSimple.class, "ledStrip");
 
+        rgbFan = hardwareMap.get(DcMotor.class, "rgbFan");
+
         controlHub = hardwareMap.get(LynxModule.class, "Control Hub");
         expansionHub = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
 
@@ -99,5 +107,8 @@ public class Hardware {
         expansionHubLED = hardwareMap.get(Blinker.class, "Expansion Hub 2");
 
         controlHubButton = Rev3328.getInstance().getUserButtonPin();
+        startButton = hardwareMap.get(DigitalChannel.class, "startButton");
+        indicatorLED = hardwareMap.get(LED.class, "indicatorLED");
+
     }
 }
