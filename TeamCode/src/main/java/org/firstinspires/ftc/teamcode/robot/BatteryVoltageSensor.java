@@ -13,7 +13,7 @@ public class BatteryVoltageSensor extends RobotModule {
 
     private VoltageSensor voltageSensor;
 
-    public static volatile double SENSOR_REFRESH_RATE_HZ = 3;
+    public static volatile double SENSOR_REFRESH_RATE_HZ = 2.5;
 
     private final TimedQuery<Double> voltageSensorQuery = new TimedQuery<>(() -> voltageSensor.getVoltage(), SENSOR_REFRESH_RATE_HZ);
 
