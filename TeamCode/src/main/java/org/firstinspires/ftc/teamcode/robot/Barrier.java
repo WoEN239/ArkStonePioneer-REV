@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.robot;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.ServoEx;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.TimedSender;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.TimedSender;
 @Config
 public class Barrier extends RobotModule {
 
-    private ServoEx barrierServo;
+    private Servo barrierServo;
 
     public static volatile double SERVO_REFRESH_RATE_HZ = 0.25;
 
@@ -22,8 +23,8 @@ public class Barrier extends RobotModule {
 
     public static boolean USE_ANGLE = true;
 
-    public static volatile float MIN_OPEN_ANGLE = (float) toRadians(-15f);
-    public static volatile float MAX_OPEN_ANGLE = (float) toRadians(105f);
+    public static volatile double MIN_OPEN_ANGLE = toRadians(-15f);
+    public static volatile double MAX_OPEN_ANGLE = toRadians(105f);
 
     private final ElapsedTime timeSinceLastBarrierOpening = new ElapsedTime();
 
@@ -34,7 +35,8 @@ public class Barrier extends RobotModule {
     @Override
     public void initialize() {
         barrierServo = robot.hardware.barrierServo;
-        barrierServo.setPwmEnable();
+        if (barrierServo instanceof PwmControl)
+            ((PwmControl) barrierServo).setPwmEnable();
     }
 
     @Override

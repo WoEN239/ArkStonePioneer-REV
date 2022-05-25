@@ -12,14 +12,15 @@
 apply from: '../build.common.gradle'
 apply plugin: 'kotlin-android'
 dependencies {
+
+    implementation('com.acmerobotics.dashboard:dashboard:0.4.4') {
+        exclude group: 'androidx.annotation', module: 'annotation'
+        exclude group: 'org.firstinspires.ftc'
+    }
     /*
      * Other Modules
      */
     implementation project(':FtcRobotController')
-
-    implementation('com.acmerobotics.dashboard:dashboard:0.4.4') {
-        exclude group: 'org.firstinspires.ftc'
-    }
 
     //implementation 'com.github.mik3y:usb-serial-for-android:3.4.3'
     implementation "androidx.core:core-ktx:1.6.0"

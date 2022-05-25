@@ -160,18 +160,18 @@ class DifferentialDrivetrain(robot: WoENRobot) : RobotModule(robot) {
 
 
     companion object {
-        @Volatile @JvmStatic var LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD
-        @Volatile @JvmStatic var RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE
-        @Volatile @JvmStatic var MOTOR_ZEROPOWERBEHAVIOR = ZeroPowerBehavior.FLOAT
-        @Volatile @JvmStatic var MOTOR_REFRESH_RATE_HZ = 0.5
-        @Volatile @JvmStatic var DRIVETRAIN_CONTROL_MODE = DrivetrainControlMode.FEEDFORWARD
-        @Volatile @JvmStatic var VELOCITY_KP = 27.0
-        @Volatile @JvmStatic var VELOCITY_KI = 0.5
-        @Volatile @JvmStatic var VELOCITY_KD = .0
-        @Volatile @JvmStatic var VELOCITY_KV = 14.46
-        @Volatile @JvmStatic var VELOCITY_KS = 2400.0
-        @Volatile @JvmStatic var VELOCITY_MAXI = 16536.0
-        @Volatile @JvmStatic var ANGLE_MEASUREMENT_METHOD = AngleMeasurementMethod.HYBRID
+        @Volatile @JvmField var LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD
+        @Volatile @JvmField var RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE
+        @Volatile @JvmField var MOTOR_ZEROPOWERBEHAVIOR = ZeroPowerBehavior.FLOAT
+        @Volatile @JvmField var MOTOR_REFRESH_RATE_HZ = 0.5
+        @Volatile @JvmField var DRIVETRAIN_CONTROL_MODE = DrivetrainControlMode.FEEDFORWARD
+        @Volatile @JvmField var VELOCITY_KP = 27.0
+        @Volatile @JvmField var VELOCITY_KI = 0.5
+        @Volatile @JvmField var VELOCITY_KD = .0
+        @Volatile @JvmField var VELOCITY_KV = 14.46
+        @Volatile @JvmField var VELOCITY_KS = 2400.0
+        @Volatile @JvmField var VELOCITY_MAXI = 16536.0
+        @Volatile @JvmField var ANGLE_MEASUREMENT_METHOD = AngleMeasurementMethod.HYBRID
 
         private val MOTOR_CPR_NOGEARBOX = 24
         private val MOTOR_GEARING = 10.0

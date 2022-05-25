@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.LED;
-import com.qualcomm.robotcore.hardware.ServoEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.hardware.android.Rev3328;
@@ -39,7 +39,7 @@ public class Hardware {
     protected final DcMotorEx separatorMotor;
     protected final ColorSensor puckColorSensor;
 
-    protected final ServoEx barrierServo;
+    protected final Servo barrierServo;
     protected final ColorSensor fieldColorSensor;
 
     protected final DcMotorEx leftMainMotor;
@@ -75,7 +75,7 @@ public class Hardware {
         puckColorSensor = new HiTechnicNxtColorSensor(hardwareMap.get(I2cDeviceSynch.class, "puckColorSensor"));
         //separatorColorSensor = hardwareMap.get(ColorSensor.class, "separatorColorSensor");
 
-        barrierServo = hardwareMap.get(ServoEx.class, "barrierServo");
+        barrierServo = hardwareMap.get(Servo.class, "barrierServo");
         fieldColorSensor = new HiTechnicNxtColorSensor(hardwareMap.get(I2cDeviceSynch.class, "fieldColorSensor"));
 
         leftMainMotor = hardwareMap.get(DcMotorEx.class, "leftMotor");

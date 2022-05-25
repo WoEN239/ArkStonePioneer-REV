@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.TimedQuery;
 public class OrientationSensor extends RobotModule {
 
     public static volatile double SENSOR_REFRESH_RATE_HZ = 5;
-    public static volatile LynxI2cDeviceSynch.BusSpeed I2C_BUS_SPEED = LynxI2cDeviceSynch.BusSpeed.FAST_400K;
+    private static final LynxI2cDeviceSynch.BusSpeed I2C_BUS_SPEED = LynxI2cDeviceSynch.BusSpeed.FAST_400K;
     private BNO055IMU gyro;
 
     public boolean isNewDataAvailable() {

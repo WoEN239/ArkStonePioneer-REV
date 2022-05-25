@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.util.I2CUtils;
 import org.firstinspires.ftc.teamcode.util.TimedQuery;
 import org.outoftheboxrobotics.neutrinoi2c.Rev2mDistanceSensor.AsyncRev2MSensor;
 
@@ -13,6 +15,7 @@ public class WallSensor extends RobotModule {
     public static volatile double MIN_DISTANCE_TO_WALL_M = 0.15;
     public static volatile DistanceMode DISTANCE_MODE = DistanceMode.AVERAGE;
     public static volatile AsyncRev2MSensor.AccuracyMode ACCURACY_MODE = AsyncRev2MSensor.AccuracyMode.MODE_HIGH_ACCURACY;
+    private static final LynxI2cDeviceSynch.BusSpeed I2C_BUS_SPEED = LynxI2cDeviceSynch.BusSpeed.FAST_400K;
     private boolean nearWall = false;
     private double distanceM = 2.5;
     private DistanceSensor leftDistanceSensor;
@@ -31,6 +34,8 @@ public class WallSensor extends RobotModule {
         DistanceSensor distanceSensor2 = robot.hardware.rightDistanceSensor;
         leftDistanceSensor = distanceSensor1;
         rightDistanceSensor = distanceSensor2;
+        I2CUtils.setBusSpeed(distanceSensor1, I2C_BUS_SPEED);
+        I2CUtils.setBusSpeed(distanceSensor2, I2C_BUS_SPEED);
         //if (distanceSensor1 instanceof Rev2mDistanceSensor)
         //    leftDistanceSensor = new AsyncRev2MSensor((Rev2mDistanceSensor) distanceSensor1);
         //if (distanceSensor2 instanceof Rev2mDistanceSensor)

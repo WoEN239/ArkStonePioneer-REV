@@ -49,8 +49,6 @@ public class Separator extends RobotModule {
 
     private final LowHighPassLimiter separatorMotorPowerLimiter = new LowHighPassLimiter(separatorMotorVoltageCompensator::accept, MIN_MOTOR_POWER, MAX_MOTOR_POWER);
 
-
-
     public static volatile double VELOCITY_KP = 5.0;
     public static volatile double VELOCITY_KI = 10.0;
     public static volatile double VELOCITY_KD = .0;
