@@ -43,11 +43,11 @@ public class OrientationSensor extends RobotModule {
 
     @Override
     public void update() {
+        newDataAvailable = false;
         orientation = timedGyroQuery.getValue();
     }
 
     public float getOrientation() {
-        newDataAvailable = false;
         return orientation;
     }
 }

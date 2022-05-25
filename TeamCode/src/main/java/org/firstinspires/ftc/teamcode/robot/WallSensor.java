@@ -24,6 +24,17 @@ public class WallSensor extends RobotModule {
     private DistanceSensor rightDistanceSensor;
     private final TimedQuery<Double> distanceSensor2Query = new TimedQuery<>(() -> rightDistanceSensor.getDistance(DistanceUnit.METER), SENSOR_REFRESH_RATE_HZ);
 
+    public double getLeftDistance() {
+        return leftDistance;
+    }
+
+    public double getRightDistance() {
+        return rightDistance;
+    }
+
+    private double leftDistance = .0;
+    private double rightDistance = .0;
+
     public WallSensor(WoENRobot robot) {
         super(robot);
     }
@@ -48,9 +59,11 @@ public class WallSensor extends RobotModule {
 
     @Override
     public void update() {
+        leftDistance = distanceSensor1Query.getValue();
+        rightDistance = distanceSensor2Query.getValue();
         distanceM = DISTANCE_MODE.equals(DistanceMode.MIN) ?
-                Math.min(distanceSensor1Query.getValue(), distanceSensor2Query.getValue())
-                : (distanceSensor1Query.getValue() + distanceSensor2Query.getValue()) / 2;
+                Math.min(leftDistance, rightDistance)
+                : (leftDistance + rightDistance) / 2;
         nearWall = distanceM < MIN_DISTANCE_TO_WALL_M;
     }
 

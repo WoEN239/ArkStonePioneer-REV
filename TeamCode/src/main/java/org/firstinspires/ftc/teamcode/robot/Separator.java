@@ -72,6 +72,7 @@ public class Separator extends RobotModule {
     private PIDVASMotorController motorPositionController;
 
     private double previousSeparatorMotorTarget = 0;
+    private int separatorMotorEncoderValue = 0;
 
     private double separatorMotorTarget = 0;
     private final ElapsedTime separatorMotorStallDetectionTimer = new ElapsedTime();
@@ -135,7 +136,7 @@ public class Separator extends RobotModule {
 
     @Override
     public void update() {
-        if (!robot.fieldSensor.isOnTeamSquare() && motorPositionController.isAtTarget()) {
+        if ((!robot.fieldSensor.isOnTeamSquare()) && motorPositionController.isAtTarget()) {
             lastReadColorInt = puckColorSensor.argb();
             lastReadColor = puckColorSensorReference.matchClosestColor(lastReadColorInt);
             FieldColor teamColor = robot.fieldSensor.getTeamFieldColor();
@@ -162,7 +163,12 @@ public class Separator extends RobotModule {
             separatorMotorStallDetectionTimer.reset();
         }
 
+        separatorMotorEncoderValue = separatorMotor.getCurrentPosition();
         motorPositionController.update(separatorMotorTarget);
+    }
+
+    public int getSeparatorMotorEncoderValue(){
+        return separatorMotorEncoderValue;
     }
 
     public double getSeparatorMotorTarget() {
