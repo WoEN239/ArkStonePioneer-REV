@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -16,11 +15,11 @@ public class WallSensor extends RobotModule {
     public static volatile AsyncRev2MSensor.AccuracyMode ACCURACY_MODE = AsyncRev2MSensor.AccuracyMode.MODE_HIGH_ACCURACY;
     private boolean nearWall = false;
     private double distanceM = 2.5;
-    private AsyncRev2MSensor leftDistanceSensor;
-    //public static double SENSOR_REFRESH_RATE_HZ = 6.66;
-    private final TimedQuery<Double> distanceSensor1Query = new TimedQuery<>(() -> leftDistanceSensor.getDistance(DistanceUnit.METER), 50);
-    private AsyncRev2MSensor rightDistanceSensor;
-    private final TimedQuery<Double> distanceSensor2Query = new TimedQuery<>(() -> rightDistanceSensor.getDistance(DistanceUnit.METER), 50);
+    private DistanceSensor leftDistanceSensor;
+    public static double SENSOR_REFRESH_RATE_HZ = 6.66;//50
+    private final TimedQuery<Double> distanceSensor1Query = new TimedQuery<>(() -> leftDistanceSensor.getDistance(DistanceUnit.METER), SENSOR_REFRESH_RATE_HZ);
+    private DistanceSensor rightDistanceSensor;
+    private final TimedQuery<Double> distanceSensor2Query = new TimedQuery<>(() -> rightDistanceSensor.getDistance(DistanceUnit.METER), SENSOR_REFRESH_RATE_HZ);
 
     public WallSensor(WoENRobot robot) {
         super(robot);
@@ -30,14 +29,16 @@ public class WallSensor extends RobotModule {
     public void initialize() {
         DistanceSensor distanceSensor1 = robot.hardware.leftDistanceSensor;
         DistanceSensor distanceSensor2 = robot.hardware.rightDistanceSensor;
-        if (distanceSensor1 instanceof Rev2mDistanceSensor)
-            leftDistanceSensor = new AsyncRev2MSensor((Rev2mDistanceSensor) distanceSensor1);
-        if (distanceSensor2 instanceof Rev2mDistanceSensor)
-            rightDistanceSensor = new AsyncRev2MSensor((Rev2mDistanceSensor) distanceSensor2);
-        leftDistanceSensor.setSensorAccuracyMode(ACCURACY_MODE);
-        rightDistanceSensor.setSensorAccuracyMode(ACCURACY_MODE);
-        leftDistanceSensor.enable();
-        rightDistanceSensor.enable();
+        leftDistanceSensor = distanceSensor1;
+        rightDistanceSensor = distanceSensor2;
+        //if (distanceSensor1 instanceof Rev2mDistanceSensor)
+        //    leftDistanceSensor = new AsyncRev2MSensor((Rev2mDistanceSensor) distanceSensor1);
+        //if (distanceSensor2 instanceof Rev2mDistanceSensor)
+        //    rightDistanceSensor = new AsyncRev2MSensor((Rev2mDistanceSensor) distanceSensor2);
+        //leftDistanceSensor.setSensorAccuracyMode(ACCURACY_MODE);
+        //rightDistanceSensor.setSensorAccuracyMode(ACCURACY_MODE);
+        //leftDistanceSensor.enable();
+        //rightDistanceSensor.enable();
     }
 
     @Override
