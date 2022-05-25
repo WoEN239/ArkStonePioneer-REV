@@ -7,6 +7,11 @@ import static org.firstinspires.ftc.teamcode.util.MathUtils.sqr;
 import static java.lang.Math.sqrt;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.IntRange;
+
+import org.checkerframework.checker.units.qual.C;
+
+import java.util.Locale;
 
 public class ColorUtils {
 
@@ -16,5 +21,9 @@ public class ColorUtils {
 
     public static double rgbDistance(double r1, double g1, double b1, double r2, double g2, double b2) {
         return sqrt(sqr(r1 - r2) + sqr(g1 - g2) + sqr(b1 - b2));
+    }
+
+    public static String colorToString(@ColorInt int color){
+        return String.format(Locale.getDefault(),"Color: r=%d, g=%d, b=%d", red(color), green(color), blue(color));
     }
 }

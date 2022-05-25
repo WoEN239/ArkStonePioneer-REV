@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.test;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.color.ColorUtils;
 import org.firstinspires.ftc.teamcode.robot.WoENRobot;
 
 @TeleOp
@@ -22,9 +23,12 @@ public class TestOpMode extends LinearOpMode {
 
         waitForStart();
 
-        robot.telemetryNode.setTelemetryCallback(telemetry -> {
+        robot.telemetryNode.getTelemetryCallbacks().add(telemetry -> {
             telemetry.addData("Status", "Running");
-            telemetry.addData("heading", Math.toDegrees(robot.odometry.getCurrentPosition().getHeading()));
+            telemetry.addData("Color", robot.fieldSensor.getDetectedColor());
+            telemetry.addData("Team", robot.fieldSensor.getTeamFieldColor());
+            telemetry.addData("Value", ColorUtils.colorToString(robot.fieldSensor.getLastReadColorInt()));
+            telemetry.addData("Separator color", robot.separator.getLastReadColor());
             telemetry.addData("Hz", robot.refreshRateAnalyzer.getUpdateRateHz());
         });
 
