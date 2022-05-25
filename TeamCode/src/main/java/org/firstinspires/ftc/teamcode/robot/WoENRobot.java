@@ -5,8 +5,6 @@ import android.graphics.Color;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.R;
-
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -14,9 +12,9 @@ public class WoENRobot {
 
     public final Separator separator = new Separator(this);
     public final Intake intake = new Intake(this);
-    public final Drivetrain drivetrain = new Drivetrain(this);
+    public final DifferentialDrivetrain drivetrain = new DifferentialDrivetrain(this);
+    public final DifferentialDrivetrain.DifferentialOdometry odometry = drivetrain.getOdometry();
     public final LEDController LEDController = new LEDController(this);
-    public final Odometry odometry = new Odometry(this);
     public final Barrier barrier = new Barrier(this);
     public final FieldSensor fieldSensor = new FieldSensor(this);
     public final OrientationSensor orientationSensor = new OrientationSensor(this);
