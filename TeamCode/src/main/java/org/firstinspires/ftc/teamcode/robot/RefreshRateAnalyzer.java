@@ -28,7 +28,7 @@ public class RefreshRateAnalyzer implements LoopedSubsystem {
     @Override
     public void update() {
         if (loopTimer.seconds() >= ANALYZE_TIME_SECONDS) {
-            updateRateHz = counter / ANALYZE_TIME_SECONDS;
+            updateRateHz = (double) counter / ANALYZE_TIME_SECONDS;
             counter = 0;
             loopTimer.reset();
         } else
