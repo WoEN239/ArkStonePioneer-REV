@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
-import com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2;
 
 import org.firstinspires.ftc.teamcode.util.I2CUtils;
 import org.firstinspires.ftc.teamcode.util.TimedQuery;
@@ -12,12 +11,19 @@ import org.firstinspires.ftc.teamcode.util.TimedQuery;
 @Config
 public class OrientationSensor extends RobotModule {
 
-    private static final int I2C_BUS = 0;
-    public static volatile double SENSOR_REFRESH_RATE_HZ = 50;
+    public static volatile double SENSOR_REFRESH_RATE_HZ = 5;
     public static volatile LynxI2cDeviceSynch.BusSpeed I2C_BUS_SPEED = LynxI2cDeviceSynch.BusSpeed.FAST_400K;
     private BNO055IMU gyro;
-    private final TimedQuery<Float> timedGyroQuery = new TimedQuery<>(() -> gyro
-            .getAngularOrientation().firstAngle, SENSOR_REFRESH_RATE_HZ);
+
+    public boolean isNewDataAvailable() {
+        return newDataAvailable;
+    }
+
+    private boolean newDataAvailable = false;
+    private final TimedQuery<Float> timedGyroQuery = new TimedQuery<>(() -> {
+        newDataAvailable = true;
+        return gyro.getAngularOrientation().firstAngle;
+    }, SENSOR_REFRESH_RATE_HZ);
 
     private float orientation = 0.0f;
 
@@ -41,6 +47,7 @@ public class OrientationSensor extends RobotModule {
     }
 
     public float getOrientation() {
+        newDataAvailable = false;
         return orientation;
     }
 }
