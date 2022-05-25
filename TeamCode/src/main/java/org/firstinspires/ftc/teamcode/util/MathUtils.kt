@@ -1,29 +1,35 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.util
 
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
-import static java.lang.Math.cos;
+object MathUtils {
 
-public final class MathUtils {
-
-    public static final double EPSILON = 1e-5;
-    private static final double MILLIS_TO_RADIANS = PI * 2.0 * 0.001;
-
-    public static double sqr(double num) {
-        return num * num;
+    const val EPSILON = 1e-5
+    private const val MILLIS_TO_RADIANS = Math.PI * 2.0 * 0.001
+    @JvmStatic
+    fun sqr(num: Double): Double {
+        return num * num
     }
 
-    public static boolean doubleEquals(double d1, double d2) {
-        return abs(d1 - d2) < EPSILON;
+    @JvmStatic
+    fun doubleEquals(d1: Double, d2: Double): Boolean {
+        return Math.abs(d1 - d2) < EPSILON
     }
 
-    public static double getSineWave(double period) {
-        return 0.5 - cos(System.currentTimeMillis() * period * MILLIS_TO_RADIANS) * 0.5;
+    @JvmStatic
+    fun getSineWave(period: Double): Double {
+        return 0.5 - Math.cos(System.currentTimeMillis() * period * MILLIS_TO_RADIANS) * 0.5
     }
 
-    public static double angleWrap(double angle) {
-        while (angle > PI) angle -= PI * 2;
-        while (angle < -PI) angle += PI * 2;
-        return angle;
+    fun angleWrap(angle: Double): Double {
+        var resultingAngle = angle
+        while (angle > Math.PI) resultingAngle -= Math.PI * 2
+        while (angle < -Math.PI) resultingAngle += Math.PI * 2
+        return resultingAngle
+    }
+
+    fun angleWrapHalf(angle1: Double): Double {
+        var angle = angle1
+        while (angle > Math.PI / 2) angle -= Math.PI
+        while (angle < -Math.PI / 2) angle += Math.PI
+        return angle
     }
 }
