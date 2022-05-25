@@ -21,6 +21,7 @@ public class WoENRobot {
     public final WallSensor wallSensor = new WallSensor(this);
     public final BatteryVoltageSensor batteryVoltageSensor = new BatteryVoltageSensor(this);
     public final RefreshRateAnalyzer refreshRateAnalyzer = new RefreshRateAnalyzer();
+    public final TelemetryNode telemetryNode = new TelemetryNode(this);
     protected final Hardware hardware;
     protected final LinearOpMode opMode;
     private final Supplier<Stream<LoopedSubsystem>> allModules = () -> Stream.of(
@@ -34,7 +35,8 @@ public class WoENRobot {
             orientationSensor,
             wallSensor,
             batteryVoltageSensor,
-            refreshRateAnalyzer
+            refreshRateAnalyzer,
+            telemetryNode
     );
 
     public WoENRobot(LinearOpMode opMode) {
