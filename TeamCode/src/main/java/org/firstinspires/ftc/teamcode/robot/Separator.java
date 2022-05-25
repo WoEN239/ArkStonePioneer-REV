@@ -64,15 +64,12 @@ public class Separator extends RobotModule {
     public static volatile double POSITION_MAXI = 2374.4;
     public static volatile double POSITION_ERROR_THRESHOLD = 20;
 
-    private PIDVASMotorController motorVelocityController;
+    private PIDVASMotorController motorVelocityController = null;
 
     public static volatile double MIN_MOTOR_RPM = 0.0;
     public static volatile double MAX_MOTOR_RPM = 350.0;
 
-    private final LowHighPassLimiter separatorMotorVelocityLimiter = new LowHighPassLimiter(motorVelocityController::update,
-            MIN_MOTOR_RPM * MOTOR_RPM_TO_TPS_RATIO,
-            MAX_MOTOR_RPM * MOTOR_RPM_TO_TPS_RATIO);
-
+    private LowHighPassLimiter separatorMotorVelocityLimiter = null;
 
     private PIDVASMotorController motorPositionController;
 
@@ -126,6 +123,11 @@ public class Separator extends RobotModule {
 
         motorVelocityController = new PIDVASMotorController(separatorMotorPowerLimiter::update, separatorMotor::getVelocity,
                 () -> VELOCITY_KP, () -> VELOCITY_KI, () -> VELOCITY_KD, () -> VELOCITY_KV, () -> 0, () -> VELOCITY_KS, () -> VELOCITY_MAXI, 0, false);
+
+        separatorMotorVelocityLimiter = new LowHighPassLimiter(motorVelocityController::update,
+                MIN_MOTOR_RPM * MOTOR_RPM_TO_TPS_RATIO,
+                MAX_MOTOR_RPM * MOTOR_RPM_TO_TPS_RATIO);
+
         motorPositionController = new PIDVASMotorController(separatorMotorVelocityLimiter::update, separatorMotor::getCurrentPosition,
                 () -> POSITION_KP, () -> POSITION_KI, () -> POSITION_KD, () -> 0, () -> 0, () -> 0, () -> POSITION_MAXI, POSITION_ERROR_THRESHOLD, false);
 
