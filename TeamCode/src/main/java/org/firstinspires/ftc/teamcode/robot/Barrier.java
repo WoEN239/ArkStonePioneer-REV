@@ -18,8 +18,8 @@ public class Barrier extends RobotModule {
 
     private final TimedSender<Double> barrierServoPositionSender = new TimedSender<>(position -> barrierServo.setPosition(position), SERVO_REFRESH_RATE_HZ);
 
-    public static volatile double BARRIER_OPEN = 0.25;
-    public static volatile double BARRIER_CLOSE = 0.5;
+    public static volatile double BARRIER_OPEN = 0.36;
+    public static volatile double BARRIER_CLOSE = 0.47;
 
     public static boolean USE_ANGLE = true;
 

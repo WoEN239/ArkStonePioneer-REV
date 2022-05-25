@@ -26,8 +26,8 @@ public class FieldSensor extends RobotModule {
     public static volatile boolean ADJUST_REFERENCE_ON_INITIALISATION = true;
     public static volatile boolean PICK_COLOR_DYNAMICALLY = true;
     public static volatile FieldColor PRESELECTED_TEAM_COLOR = FieldColor.RED;
-    public static volatile double COLOR_DETECTION_TIME_WINDOW_S = .15;
-    public static volatile double SENSOR_REFRESH_RATE_HZ = 5;
+    public static volatile double COLOR_DETECTION_TIME_WINDOW_S = .5;
+    public static volatile double SENSOR_REFRESH_RATE_HZ = 8;
 
     private ColorSensor fieldColorSensor;
 
@@ -40,15 +40,15 @@ public class FieldSensor extends RobotModule {
     private FieldColor detectedColor = FieldColor.WHITE;
     private FieldColor lastReadColor = FieldColor.WHITE;
 
-    public static volatile int RED_FIELD_COLOR_R = red(Color.RED);
-    public static volatile int RED_FIELD_COLOR_G = green(Color.RED);
-    public static volatile int RED_FIELD_COLOR_B = blue(Color.RED);
-    public static volatile int BLUE_FIELD_COLOR_R = red(Color.BLUE);
-    public static volatile int BLUE_FIELD_COLOR_G = green(Color.BLUE);
-    public static volatile int BLUE_FIELD_COLOR_B = blue(Color.BLUE);
-    public static volatile int WHITE_FIELD_COLOR_R = red(Color.WHITE);
-    public static volatile int WHITE_FIELD_COLOR_G = green(Color.WHITE);
-    public static volatile int WHITE_FIELD_COLOR_B = blue(Color.WHITE);
+    public static volatile int RED_FIELD_COLOR_R = 148;
+    public static volatile int RED_FIELD_COLOR_G = 25;
+    public static volatile int RED_FIELD_COLOR_B = 1;
+    public static volatile int BLUE_FIELD_COLOR_R = 11;
+    public static volatile int BLUE_FIELD_COLOR_G = 45;
+    public static volatile int BLUE_FIELD_COLOR_B = 120;
+    public static volatile int WHITE_FIELD_COLOR_R = 110;
+    public static volatile int WHITE_FIELD_COLOR_G = 128;
+    public static volatile int WHITE_FIELD_COLOR_B = 108;
 
     private final ColorReference fieldColorSensorReference = new ColorReferenceMap(
             new EnumMap<FieldColor, Integer>(FieldColor.class) {{
