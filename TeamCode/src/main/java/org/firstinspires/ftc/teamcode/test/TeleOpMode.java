@@ -1,39 +1,27 @@
 package org.firstinspires.ftc.teamcode.test;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.WoENRobot;
 
 @TeleOp
-public class TestOpMode extends LinearOpMode {
+public class TeleOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         WoENRobot robot = new WoENRobot(this);
-
-
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Status", "Initializing");
         telemetry.update();
         robot.initialize();
-
         telemetry.addData("Status", "Initialized, ready to start");
         telemetry.update();
-
         waitForStart();
-
+        telemetry.addData("Status", "Running");
+        telemetry.update();
         while (opModeIsActive()) {
+            robot.drivetrain.setRawPower(-gamepad1.left_stick_y, gamepad1.right_stick_x);
             robot.update();
-            if (robot.orientationSensor.isNewDataAvailable()) {
-                telemetry.addData("Status", "Running");
-                telemetry.addData("heading", Math.toDegrees(robot.odometry.getCurrentPosition().getHeading()));
-                telemetry.addData("Hz", robot.refreshRateAnalyzer.getUpdateRateHz());
-                telemetry.update();
-            }
         }
     }
 }
