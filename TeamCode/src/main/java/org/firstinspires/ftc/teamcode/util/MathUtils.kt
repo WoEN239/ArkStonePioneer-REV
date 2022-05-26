@@ -15,8 +15,8 @@ object MathUtils {
     }
 
     @JvmStatic
-    fun getSineWave(period: Double): Double {
-        return 0.5 - Math.cos(System.currentTimeMillis() * period * MILLIS_TO_RADIANS) * 0.5
+    fun getSineWave(frequency: Double): Double {
+        return 0.5 - Math.cos(System.currentTimeMillis() * frequency * MILLIS_TO_RADIANS) * 0.5
     }
 
     fun angleWrap(angle: Double): Double {
