@@ -17,7 +17,7 @@ public class LEDController extends RobotModule {
 
     public static volatile double REFRESH_RATE_HZ = 25;
     public static volatile double PUCK_INDICATION_S = 2.0;
-    public static volatile double LED_STRIP_BREATHE_PERIOD = 1.0;
+    public static volatile double LED_STRIP_BREATHE_FREQUENCY = 1.0;
     public static volatile int RGB_FAN_RED_SIGN = 1;
 
     private final ElapsedTime refreshTimer = new ElapsedTime();
@@ -56,8 +56,8 @@ public class LEDController extends RobotModule {
             if (puckCollectedRecently)
                 rgbFanControl.setColor(RgbFanMode.fromFieldColor(robot.separator.getLastCollectedPuckColor()), 1.0);
             else
-                rgbFanControl.setColor(RgbFanMode.fromFieldColor(robot.fieldSensor.getTeamFieldColor()), getSineWave(LED_STRIP_BREATHE_PERIOD) * 0.5 + 0.25);
-            ledStripPowerSender.trySend(getSineWave(LED_STRIP_BREATHE_PERIOD));
+                rgbFanControl.setColor(RgbFanMode.fromFieldColor(robot.fieldSensor.getTeamFieldColor()), getSineWave(LED_STRIP_BREATHE_FREQUENCY) * 0.5 + 0.25);
+            ledStripPowerSender.trySend(getSineWave(LED_STRIP_BREATHE_FREQUENCY));
             refreshTimer.reset();
         }
     }

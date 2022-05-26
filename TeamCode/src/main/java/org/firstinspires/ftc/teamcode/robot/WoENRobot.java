@@ -22,6 +22,8 @@ public class WoENRobot {
     public final BatteryVoltageSensor batteryVoltageSensor = new BatteryVoltageSensor(this);
     public final RefreshRateAnalyzer refreshRateAnalyzer = new RefreshRateAnalyzer();
     public final TelemetryNode telemetryNode = new TelemetryNode(this);
+    public final StartButton startButton = new StartButton(this);
+    public final Movement movement = new Movement(this);
     protected final Hardware hardware;
     protected final LinearOpMode opMode;
     private final Supplier<Stream<LoopedSubsystem>> allModules = () -> Stream.of(
@@ -36,7 +38,8 @@ public class WoENRobot {
             wallSensor,
             batteryVoltageSensor,
             refreshRateAnalyzer,
-            telemetryNode
+            telemetryNode,
+            movement
     );
 
     public WoENRobot(LinearOpMode opMode) {
@@ -53,6 +56,6 @@ public class WoENRobot {
 
     public void update() {
         hardware.allHubs.get().forEach(LynxModule::clearBulkCache);
-        allModules.get().forEach(LoopedSubsystem::update);
+        allModules.get().forEachOrdered(LoopedSubsystem::update);
     }
 }

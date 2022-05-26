@@ -107,6 +107,7 @@ class TelemetryNode(robot: WoENRobot) : RobotModule(robot) {
                 TelemetryTopic.REFRESH_RATE -> {
                     telemetry.addData("Refresh rate (Hz)", robot.refreshRateAnalyzer.updateRateHz)
                 }
+                TelemetryTopic.NONE -> {}
             }
             telemetry.update()
         }
@@ -126,7 +127,7 @@ class TelemetryNode(robot: WoENRobot) : RobotModule(robot) {
     }
 
     enum class TelemetryTopic {
-        COMPETITION_DISPLAY, SEPARATOR, FIELD_SENSOR, WALL_SENSOR, ORIENTATION_SENSOR, REFRESH_RATE
+        COMPETITION_DISPLAY, SEPARATOR, FIELD_SENSOR, WALL_SENSOR, ORIENTATION_SENSOR, REFRESH_RATE, NONE
     }
 
     enum class TelemetryDestination {
