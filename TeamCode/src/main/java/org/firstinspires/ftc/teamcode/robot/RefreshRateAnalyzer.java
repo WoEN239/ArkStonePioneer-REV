@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.robot.superclasses.LoopedSubsystem;
+
 @Config
 public class RefreshRateAnalyzer implements LoopedSubsystem {
 

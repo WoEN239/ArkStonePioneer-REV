@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.robot.superclasses.RobotModule;
+
 @Config
 public class ExternalOdometry extends RobotModule {
 

@@ -5,9 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.robot.superclasses.LoopedSubsystem
+import org.firstinspires.ftc.teamcode.robot.superclasses.RobotModule
 import org.firstinspires.ftc.teamcode.util.CoupledDcMotorEx
 import org.firstinspires.ftc.teamcode.util.MathUtils.angleWrapHalf
-import org.firstinspires.ftc.teamcode.util.PIDVASMotorController
+import org.firstinspires.ftc.teamcode.util.PIDVASController
 import org.firstinspires.ftc.teamcode.util.Pose2D
 import org.firstinspires.ftc.teamcode.util.TimedSender
 import java.lang.Math.toRadians
@@ -26,18 +28,16 @@ class DifferentialDrivetrain(robot: WoENRobot) : RobotModule(robot) {
         TimedSender({ power: Double -> leftMotor.power = power }, MOTOR_REFRESH_RATE_HZ)
     private val leftMotorVoltageCompensator =
         DoubleConsumer { leftMotorPowerSender.trySend(it * robot.batteryVoltageSensor.kVoltage) }
-    private var leftMotorController = PIDVASMotorController(
-        leftMotorVoltageCompensator,
-        { leftMotor.velocity },
-        { VELOCITY_KP },
-        { VELOCITY_KI },
-        { VELOCITY_KD },
-        { VELOCITY_KV },
-        { 0.0 },
-        { VELOCITY_KS },
-        { VELOCITY_MAXI },
-        0.0,
-        false
+    private val leftMotorController = PIDVASController(
+        outputConsumer = { leftMotorVoltageCompensator.accept(it / 32767) },
+        sensorValueSupplier = { leftMotor.velocity },
+        kP = { VELOCITY_KP },
+        kI = { VELOCITY_KI },
+        kD = { VELOCITY_KD },
+        kV = { VELOCITY_KV },
+        kS = { VELOCITY_KS },
+        maxI = { VELOCITY_MAXI },
+        stopAtTarget = false
     )
     private lateinit var rightMotor: DcMotorEx
     private val rightMotorPowerSender = TimedSender(
@@ -45,44 +45,27 @@ class DifferentialDrivetrain(robot: WoENRobot) : RobotModule(robot) {
     )
     private val rightMotorVoltageCompensator =
         DoubleConsumer { power: Double -> rightMotorPowerSender.trySend(power * robot.batteryVoltageSensor.kVoltage) }
-    private var rightMotorController = PIDVASMotorController(
-        leftMotorVoltageCompensator,
-        { rightMotor.velocity },
-        { VELOCITY_KP },
-        { VELOCITY_KI },
-        { VELOCITY_KD },
-        { VELOCITY_KV },
-        { 0.0 },
-        { VELOCITY_KS },
-        { VELOCITY_MAXI },
-        0.0,
-        false
+    private val rightMotorController = PIDVASController(
+        outputConsumer = { rightMotorVoltageCompensator.accept(it / 32767) },
+        sensorValueSupplier = { rightMotor.velocity },
+        kP = { VELOCITY_KP },
+        kI = { VELOCITY_KI },
+        kD = { VELOCITY_KD },
+        kV = { VELOCITY_KV },
+        kS = { VELOCITY_KS },
+        maxI = { VELOCITY_MAXI },
+        stopAtTarget = false
     )
-    private var forwardVelocity = 0.0
-    private var turnVelocity = 0.0
-    internal fun cmToEncoderTicks(cm: Double): Double {
-        return cm / ENCODER_TICKS_TO_CM_RATIO
+    private var forwardTpsTarget = 0.0
+    private var turnTpsTarget = 0.0
+
+    fun setSpeedFraction(forwardSpeed: Double, turnSpeed: Double) {
+        setSpeed(forwardSpeed * MAX_FORWARD_SPEED_CM, turnSpeed * MAX_ROTATION_SPEED_RAD)
     }
 
-    internal fun encoderTicksToCm(ticks: Double): Double {
-        return ticks * ENCODER_TICKS_TO_CM_RATIO
-    }
-
-    internal fun encoderTicksToRotationRadians(ticks: Double): Double {
-        return encoderTicksToCm(ticks) * CM_TO_ROTATION_RADIANS_RATIO
-    }
-
-    internal fun motorEncodersToDistance(leftTicks: Double, rightTicks: Double): Double {
-        return encoderTicksToCm((leftTicks + rightTicks) * 0.5)
-    }
-
-    internal fun motorEncodersToRotation(leftTicks: Double, rightTicks: Double): Double {
-        return encoderTicksToRotationRadians((-leftTicks + rightTicks) * 0.5)
-    }
-
-    fun setRawPower(rawForwardPower: Double, rawTurnPower: Double) {
-        forwardVelocity = rawForwardPower
-        turnVelocity = rawTurnPower
+    fun setSpeed(forwardSpeedCm: Double, turnSpeedRadians: Double) {
+        forwardTpsTarget = cmToEncoderTicks(forwardSpeedCm)
+        turnTpsTarget = rotationRadiansToEncoderTicks(turnSpeedRadians)
     }
 
     override fun initialize() {
@@ -101,15 +84,16 @@ class DifferentialDrivetrain(robot: WoENRobot) : RobotModule(robot) {
 
     override fun update() {
         if (DRIVETRAIN_CONTROL_MODE == DrivetrainControlMode.FEEDFORWARD) {
-            leftMotorVoltageCompensator.accept(forwardVelocity - turnVelocity)
-            rightMotorVoltageCompensator.accept(forwardVelocity + turnVelocity)
+            leftMotorVoltageCompensator.accept((forwardTpsTarget - turnTpsTarget) / MAX_MOTOR_TPS)
+            rightMotorVoltageCompensator.accept((forwardTpsTarget + turnTpsTarget) / MAX_MOTOR_TPS)
         } else {
-            leftMotorController.update(MAX_MOTOR_TPS * (forwardVelocity - turnVelocity))
-            rightMotorController.update(MAX_MOTOR_TPS * (forwardVelocity + turnVelocity))
+            leftMotorController.update(forwardTpsTarget - turnTpsTarget)
+            rightMotorController.update(forwardTpsTarget + turnTpsTarget)
         }
     }
 
-    inner class DifferentialOdometry : LoopedSubsystem {
+    inner class DifferentialOdometry :
+        LoopedSubsystem {
 
         var currentPosition = Pose2D()
 
@@ -133,7 +117,7 @@ class DifferentialDrivetrain(robot: WoENRobot) : RobotModule(robot) {
                     deltaHeadingEncoder
             }
             var deltaPosition = Pose2D(
-                encoderTicksToCm((deltaLeftEncoder + deltaRightEncoder) * 0.5),
+                motorEncodersToDistance(deltaLeftEncoder, deltaRightEncoder),
                 .0,
                 deltaHeading
             )
@@ -178,25 +162,36 @@ class DifferentialDrivetrain(robot: WoENRobot) : RobotModule(robot) {
         private val TRACK_WIDTH_CM = 33.70002
         private val WHEEL_DIAMETER_CM = 10.6
         private val MOTOR_CPR = MOTOR_CPR_NOGEARBOX * MOTOR_GEARING
-        private val ENCODER_TICKS_TO_CM_RATIO = WHEEL_DIAMETER_CM * Math.PI / MOTOR_CPR
-        private val CM_TO_ROTATION_RADIANS_RATIO = 1.0 / TRACK_WIDTH_CM
+        private val CM_TO_ENCODER_TICKS_RATIO = WHEEL_DIAMETER_CM * Math.PI / MOTOR_CPR
+        private val ROTATION_RADIANS_TO_CM_RATIO = 1.0 / TRACK_WIDTH_CM
         private val MAX_MOTOR_RPM = 6000.0
         private val MAX_MOTOR_TPS = MOTOR_CPR * MAX_MOTOR_RPM / 60.0
+        val MAX_FORWARD_SPEED_CM = encoderTicksToCm(MAX_MOTOR_TPS)
+        val MAX_ROTATION_SPEED_RAD = encoderTicksToRotationRadians(MAX_MOTOR_TPS)
 
         private fun encoderTicksToCm(ticks: Double): Double {
-            return ticks * ENCODER_TICKS_TO_CM_RATIO
+            return ticks * CM_TO_ENCODER_TICKS_RATIO
+        }
+
+        private fun cmToEncoderTicks(cm: Double): Double {
+            return cm / CM_TO_ENCODER_TICKS_RATIO
+        }
+
+        private fun rotationRadiansToEncoderTicks(radians: Double): Double {
+            return cmToEncoderTicks(radians / ROTATION_RADIANS_TO_CM_RATIO)
         }
 
         private fun encoderTicksToRotationRadians(ticks: Double): Double {
-            return encoderTicksToCm(ticks) * CM_TO_ROTATION_RADIANS_RATIO
+            return encoderTicksToCm(ticks) * ROTATION_RADIANS_TO_CM_RATIO
         }
 
-        internal fun motorEncodersToDistance(leftTicks: Double, rightTicks: Double): Double {
+        private fun motorEncodersToDistance(leftTicks: Double, rightTicks: Double): Double {
             return encoderTicksToCm((leftTicks + rightTicks) * 0.5)
         }
 
-        internal fun motorEncodersToRotation(leftTicks: Double, rightTicks: Double): Double {
+        private fun motorEncodersToRotation(leftTicks: Double, rightTicks: Double): Double {
             return encoderTicksToRotationRadians((-leftTicks + rightTicks) * 0.5)
         }
+
     }
 }

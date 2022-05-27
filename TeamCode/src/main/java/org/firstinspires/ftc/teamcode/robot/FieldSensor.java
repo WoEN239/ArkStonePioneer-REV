@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.color.ColorReference;
 import org.firstinspires.ftc.teamcode.color.ColorReferenceMap;
 import org.firstinspires.ftc.teamcode.color.FieldColor;
+import org.firstinspires.ftc.teamcode.robot.superclasses.RobotModule;
 import org.firstinspires.ftc.teamcode.util.TimedQuery;
 
 import java.util.EnumMap;

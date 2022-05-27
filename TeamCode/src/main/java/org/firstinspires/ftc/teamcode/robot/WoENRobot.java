@@ -5,6 +5,9 @@ import android.graphics.Color;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.robot.superclasses.ActionDelegate;
+import org.firstinspires.ftc.teamcode.robot.superclasses.LoopedSubsystem;
+
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -57,5 +60,9 @@ public class WoENRobot {
     public void update() {
         hardware.allHubs.get().forEach(LynxModule::clearBulkCache);
         allModules.get().forEachOrdered(LoopedSubsystem::update);
+    }
+
+    public boolean allActionsCompleted() {
+        return allModules.get().filter(loopedSubsystem -> loopedSubsystem instanceof ActionDelegate).allMatch(loopedSubsystem -> ((ActionDelegate) loopedSubsystem).getActionCompleted());
     }
 }

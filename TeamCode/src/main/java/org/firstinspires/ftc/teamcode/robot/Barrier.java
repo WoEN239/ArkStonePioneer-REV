@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.robot.superclasses.RobotModule;
 import org.firstinspires.ftc.teamcode.util.TimedSender;
 
 @Config
@@ -35,8 +36,8 @@ public class Barrier extends RobotModule {
     @Override
     public void initialize() {
         barrierServo = robot.hardware.barrierServo;
-        if (barrierServo instanceof PwmControl)
-            ((PwmControl) barrierServo).setPwmEnable();
+        //if (barrierServo instanceof PwmControl)
+        //    ((PwmControl) barrierServo).setPwmEnable();
     }
 
     @Override

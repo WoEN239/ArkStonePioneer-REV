@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.robot.superclasses.RobotModule;
 import org.firstinspires.ftc.teamcode.util.TimedSender;
 
 import java.util.function.DoubleConsumer;

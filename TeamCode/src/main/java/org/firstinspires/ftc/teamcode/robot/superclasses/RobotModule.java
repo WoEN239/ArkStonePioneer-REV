@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.superclasses;
+
+import org.firstinspires.ftc.teamcode.robot.WoENRobot;
 
 public class RobotModule implements LoopedSubsystem {
 

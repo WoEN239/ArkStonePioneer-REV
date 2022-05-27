@@ -5,9 +5,9 @@ import java.util.function.DoubleSupplier
 import kotlin.math.abs
 import kotlin.math.sign
 
-class PIDVASMotorController(
-    private val outputConsumer: DoubleConsumer,
-    private val valueSupplier: DoubleSupplier,
+class PIDVASController(
+    private val outputConsumer: DoubleConsumer? = null,
+    private val sensorValueSupplier: DoubleSupplier = DoubleSupplier { 0.0 },
     private val kP: DoubleSupplier,
     private val kI: DoubleSupplier = DoubleSupplier { 0.0 },
     private val kD: DoubleSupplier = DoubleSupplier { 0.0 },
@@ -15,11 +15,10 @@ class PIDVASMotorController(
     private val kA: DoubleSupplier = DoubleSupplier { 0.0 },
     private val kS: DoubleSupplier = DoubleSupplier { 0.0 },
     private val maxI: DoubleSupplier = DoubleSupplier { 32767.0 },
-    private val errorThreshold: Double = 0.0,
+    private val errorThreshold: Double = 1e-5,
     private val stopAtTarget: Boolean = false
 ) {
     private var currentTime = 0L
-    private val startTime = System.nanoTime()
     private var error = 0.0
     var target = 0.0
         private set
@@ -34,18 +33,14 @@ class PIDVASMotorController(
     private var timeOld = 0L
     private var timeDelta = 0.0
     private var targetOld = 0.0
-    private val MAX_INT16 = 32767.0
-    private var currentValue = 0.0
 
-    /*fun updateCoefficients() {
-    }*/
-    fun update(target: Double): Double {
+    @JvmOverloads
+    fun update(target: Double, sensorValue: Double = sensorValueSupplier.asDouble): Double {
         this.target = target
-        currentTime = System.nanoTime() - startTime
+        currentTime = System.nanoTime()
         timeDelta = (currentTime - timeOld) / 1000000000.0
         timeOld = currentTime
-        currentValue = valueSupplier.asDouble
-        error = target - currentValue
+        error = target - sensorValue
         uP = error * kP.asDouble
         uD = (error - errorOld) * kD.asDouble / timeDelta
         uI += (kI.asDouble * error) * timeDelta
@@ -55,10 +50,10 @@ class PIDVASMotorController(
         uA = kA.asDouble * (target - targetOld) / timeDelta
         uS = kS.asDouble * sign(target)
         power = if (stopAtTarget && isAtTarget()) 0.0 else
-            (uP + uI + uD + uV + uA + uS) / MAX_INT16
+            (uP + uI + uD + uV + uA + uS)
         errorOld = error
         targetOld = target
-        outputConsumer.accept(power)
+        outputConsumer?.let { it.accept(power) }
         return power
     }
 

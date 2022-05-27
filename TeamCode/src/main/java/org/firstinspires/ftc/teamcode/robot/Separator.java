@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import static android.graphics.Color.rgb;
 import static org.firstinspires.ftc.teamcode.util.MathUtils.doubleEquals;
+import static java.lang.Math.max;
 
 import android.graphics.Color;
 
@@ -17,8 +18,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.color.ColorReference;
 import org.firstinspires.ftc.teamcode.color.ColorReferenceMap;
 import org.firstinspires.ftc.teamcode.color.FieldColor;
+import org.firstinspires.ftc.teamcode.robot.superclasses.RobotModule;
 import org.firstinspires.ftc.teamcode.util.LowHighPassLimiter;
-import org.firstinspires.ftc.teamcode.util.PIDVASMotorController;
+import org.firstinspires.ftc.teamcode.util.PIDVASController;
 import org.firstinspires.ftc.teamcode.util.TimedSender;
 
 import java.util.EnumMap;
@@ -62,14 +64,14 @@ public class Separator extends RobotModule {
     public static volatile double POSITION_MAXI = 2374.4;
     public static volatile double POSITION_ERROR_THRESHOLD = 20;
 
-    private PIDVASMotorController motorVelocityController = null;
+    private PIDVASController motorVelocityController = null;
 
     public static volatile double MIN_MOTOR_RPM = 0.0;
     public static volatile double MAX_MOTOR_RPM = 350.0;
 
     private LowHighPassLimiter separatorMotorVelocityLimiter = null;
 
-    private PIDVASMotorController motorPositionController;
+    private PIDVASController motorPositionController;
 
     private double previousSeparatorMotorTarget = 0;
     private int separatorMotorEncoderValue = 0;
@@ -120,14 +122,14 @@ public class Separator extends RobotModule {
         separatorMotor.setDirection(MOTOR_DIRECTION);
         separatorMotor.setZeroPowerBehavior(MOTOR_ZEROPOWERBEHAVIOR);
 
-        motorVelocityController = new PIDVASMotorController(separatorMotorPowerLimiter::update, separatorMotor::getVelocity,
+        motorVelocityController = new PIDVASController(power -> separatorMotorPowerLimiter.update(power / 32767.0), separatorMotor::getVelocity,
                 () -> VELOCITY_KP, () -> VELOCITY_KI, () -> VELOCITY_KD, () -> VELOCITY_KV, () -> 0, () -> VELOCITY_KS, () -> VELOCITY_MAXI, 0, false);
 
-        separatorMotorVelocityLimiter = new LowHighPassLimiter(motorVelocityController::update,
+        separatorMotorVelocityLimiter = new LowHighPassLimiter(velocity -> motorVelocityController.update(velocity),
                 MIN_MOTOR_RPM * MOTOR_RPM_TO_TPS_RATIO,
                 MAX_MOTOR_RPM * MOTOR_RPM_TO_TPS_RATIO);
 
-        motorPositionController = new PIDVASMotorController(separatorMotorVelocityLimiter::update, separatorMotor::getCurrentPosition,
+        motorPositionController = new PIDVASController(velocity -> separatorMotorVelocityLimiter.update(velocity / 32767.0), separatorMotor::getCurrentPosition,
                 () -> POSITION_KP, () -> POSITION_KI, () -> POSITION_KD, () -> 0, () -> 0, () -> 0, () -> POSITION_MAXI, POSITION_ERROR_THRESHOLD, false);
 
         separatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -142,12 +144,12 @@ public class Separator extends RobotModule {
             FieldColor teamColor = robot.fieldSensor.getTeamFieldColor();
             if (lastReadColor == teamColor) {
                 setSeparatorMotorTarget(separatorMotorTarget + MOTOR_ROTATION_ENCODER_TICKS);
-                teamPucksCollected++;
+                setTeamPucksCollected(teamPucksCollected + 1);
                 lastCollectedPuckColor = lastReadColor;
                 timeSinceLastPuckCollection.reset();
             } else if (lastReadColor == teamColor.opposite()) {
                 setSeparatorMotorTarget(separatorMotorTarget - MOTOR_ROTATION_ENCODER_TICKS);
-                opponentPucksCollected++;
+                setOpponentPucksCollected(opponentPucksCollected + 1);
                 lastCollectedPuckColor = lastReadColor;
                 timeSinceLastPuckCollection.reset();
             }
@@ -155,9 +157,9 @@ public class Separator extends RobotModule {
         if (separatorMotorStallDetectionTimer.seconds() > MOTOR_STALL_DETECTION_S) {
             setSeparatorMotorTarget(previousSeparatorMotorTarget);
             if (separatorMotorTarget > previousSeparatorMotorTarget)
-                teamPucksCollected--;
+                setTeamPucksCollected(teamPucksCollected - 1);
             else
-                opponentPucksCollected--;
+                setOpponentPucksCollected(opponentPucksCollected - 1);
         }
         if (!doubleEquals(motorPositionController.getTarget(), separatorMotorTarget) || motorPositionController.isAtTarget()) {
             separatorMotorStallDetectionTimer.reset();
@@ -192,8 +194,16 @@ public class Separator extends RobotModule {
         return lastCollectedPuckColor;
     }
 
+    private void setTeamPucksCollected(int teamPucksCollected) {
+        this.teamPucksCollected = max(teamPucksCollected, 0);
+    }
+
     public int getTeamPucksCollected() {
         return teamPucksCollected;
+    }
+
+    private void setOpponentPucksCollected(int teamPucksCollected) {
+        this.opponentPucksCollected = max(opponentPucksCollected, 0);
     }
 
     public int getOpponentPucksCollected() {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.robot.superclasses.RobotModule;
 import org.firstinspires.ftc.teamcode.util.TimedQuery;
 
 @Config

@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.color.ColorUtils.colorToString
+import org.firstinspires.ftc.teamcode.robot.superclasses.RobotModule
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.Consumer
@@ -33,7 +34,7 @@ class TelemetryNode(robot: WoENRobot) : RobotModule(robot) {
     val executorSupplier = Supplier { Executors.newSingleThreadExecutor() }
     var executor: ExecutorService = executorSupplier.get()
     val refreshTimer = ElapsedTime()
-    val telemetryCallbacks: List<Consumer<Telemetry>> = ArrayList()
+    val telemetryCallbacks: MutableList<Consumer<Telemetry>> = mutableListOf()
     val telemetryRunnable = Runnable {
         telemetry?.let { telemetry ->
             telemetryCallbacks.forEach { it.accept(telemetry) }
@@ -58,12 +59,12 @@ class TelemetryNode(robot: WoENRobot) : RobotModule(robot) {
                     telemetry.addData("Team pucks collected", robot.separator.teamPucksCollected)
                     telemetry.addLine(
                         "<font color=\"" + robot.fieldSensor.teamFieldColor.toString()
-                            .lowercase() + "\">" + "■".repeat(robot.separator.teamPucksCollected) + "</font>" + " "
+                            .lowercase() + "\">" + "■".repeat(robot.separator.teamPucksCollected + 1) + "</font>" + " "
                     )
                     telemetry.addData("Opponent pucks collected", robot.separator.teamPucksCollected)
                     telemetry.addLine(
                         "<font color=\"" + robot.fieldSensor.teamFieldColor.opposite().toString()
-                            .lowercase() + "\">" + "■".repeat(robot.separator.opponentPucksCollected) + "</font>" + " "
+                            .lowercase() + "\">" + "■".repeat(robot.separator.opponentPucksCollected + 1) + "</font>" + " "
                     )
                 }
                 TelemetryTopic.SEPARATOR -> {

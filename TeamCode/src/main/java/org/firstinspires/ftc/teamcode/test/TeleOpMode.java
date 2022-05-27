@@ -20,7 +20,7 @@ public class TeleOpMode extends LinearOpMode {
         telemetry.addData("Status", "Running");
         telemetry.update();
         while (opModeIsActive()) {
-            robot.drivetrain.setRawPower(-gamepad1.left_stick_y, gamepad1.right_stick_x);
+            robot.drivetrain.setSpeedFraction(-gamepad1.left_stick_y, gamepad1.right_stick_x);
             robot.update();
         }
     }
